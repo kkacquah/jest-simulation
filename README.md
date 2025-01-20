@@ -7,6 +7,18 @@ A TypeScript framework for simulating and testing agent-based conversations in J
 
 The framework is designed for easy testing with Jest. Use the FakeConversationGenerator to create deterministic tests:
 
+This code demonstrates a simulation test for a restaurant booking scenario using the Jest Simulation Framework. It tests whether an agent can successfully complete a reservation process. The test uses `simulationTest` function with the following components:
+
+1. Test description: "agent successfully completes restaurant booking"
+2. Test configuration object:
+   - `role`: Defines the user's persona
+   - `task`: Specifies the user's objective
+   - `inputFn`: Handles agent responses using a custom `YourConversationalAgent`
+   - `generator`: Creates a simulated conversation using `FakeConversationGenerator`
+3. Assertion function:
+   - Uses `eventually` to check the agent's events
+   - Verifies the booking details in the database match the expected reservation.
+
 ```typescript
 simulationTest(
   'agent successfully completes restaurant booking',
