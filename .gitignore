@@ -1,0 +1,44 @@
+# Dependency directories
+node_modules/
+
+# TypeScript build output
+dist/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Testing
+coverage/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# npm package lock
+package-lock.json
+yarn.lock
+
+# Optional: ignore TypeScript declaration files
+# *.d.ts
+
+# Optional: ignore specific config files
+# tsconfig.tsbuildinfo
