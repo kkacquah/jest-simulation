@@ -1,0 +1,40 @@
+{
+  "name": "jest-simulation",
+  "version": "1.0.0",
+  "description": "A Jest extension for simulation testing",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "jest",
+    "testing",
+    "simulation",
+    "mock"
+  ],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "jest": ">=29.0.0"
+  },
+  "devDependencies": {
+    "@jest/globals": "^29.7.0",
+    "@jest/pattern": "30.0.0-alpha.5",
+    "@jest/test-result": "^29.7.0",
+    "@jest/test-utils": "^0.0.0",
+    "@jest/types": "^29.6.3",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^20.10.6",
+    "dedent": "^1.5.3",
+    "execa": "^5.1.1",
+    "graceful-fs": "^4.2.11",
+    "jest": "^29.7.0",
+    "jest-util": "^29.7.0",
+    "strip-ansi": "^7.1.0",
+    "ts-jest": "^29.2.5",
+    "typescript": "^5.3.3"
+  }
+}
