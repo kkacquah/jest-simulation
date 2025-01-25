@@ -6,6 +6,7 @@ interface JestSimulationOptions {
 }
 
 export async function runJestSimulation(testFile: string, options: JestSimulationOptions = {}) {
+  console.log(`Running jest simulation for test file: ${testFile}`);
   const jestBin = require.resolve('jest/bin/jest');
   const { args = [], ...execaOptions } = options;
   
@@ -14,8 +15,7 @@ export async function runJestSimulation(testFile: string, options: JestSimulatio
     [jestBin, testFile, '--no-color', ...args],
     {
       reject: false,
-      stdout: 'pipe',
-      stderr: 'pipe',
+      stdio: 'inherit', 
       ...execaOptions,
     }
   );

@@ -51,7 +51,7 @@ export class AgentEventEmitter extends TypedEventEmitter {
 /**
  * Default maximum number of turns for a simulation
  */
-export const DEFAULT_MAX_TURNS = 50;
+export const DEFAULT_MAX_TURNS = 10;
 
 const agentResponses: ConversationMessage[] = [
   { role: 'assistant', content: 'Hello! How can I help you today?' },
@@ -125,6 +125,7 @@ export class SimulationAgent extends TypedEventEmitter {
       return;
     }
 
+    this.logger.debug('Starting turn', this.state.currentTurn);
     await this.emit(SimulationEvents.TURN_START, this.state);
 
     const input = await this.inputFn(this.state.currentTurn);
@@ -138,9 +139,11 @@ export class SimulationAgent extends TypedEventEmitter {
     this.state.currentTurn++;
     this.state.isComplete = this.state.currentTurn >= this.maxTurns;
 
+    this.logger.debug('Ending turn', this.state.currentTurn - 1);
     await this.emit(SimulationEvents.TURN_END, this.state);
 
     if (this.state.isComplete) {
+      this.logger.debug('Simulation complete');
       await this.emit(SimulationEvents.COMPLETE, this.state);
     }
   }

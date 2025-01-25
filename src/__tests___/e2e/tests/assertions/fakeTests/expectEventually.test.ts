@@ -1,5 +1,5 @@
+import { simulationExpect } from '../../../../../assertions/expect';
 import { simulationTest } from '../../../../../simulation/simulationTest';
-import { expectEventually } from '../../../../../assertions/expectEventually';
 
 describe('expectEventually', () => {
   describe('should eventually pass when condition becomes true on third turn', () => {
@@ -20,14 +20,15 @@ describe('expectEventually', () => {
         inputFn,
       },
       async ({ agent }) => {
-        expectEventually(agent.events, async () => {
+        console.log('test is running.');
+        simulationExpect(agent.events, async () => {
           expect(isThirdTurnPassed).toBe(true);
-        });
+        }).eventually();
       }
     );
   });
 
-  describe.only('should fail when condition never becomes true', () => {
+  describe('should fail when condition never becomes true', () => {
     let isThirdTurnPassed = false; // This will never be set to true
 
     simulationTest(
@@ -40,10 +41,11 @@ describe('expectEventually', () => {
           content: `Message for turn ${turn}`,
         }),
       },
-      async ({agent}) => {
-        expectEventually(agent.events, async () => {
+      async ({ agent }) => {
+        console.log('test is running.');
+        simulationExpect(agent.events, async () => {
           expect(isThirdTurnPassed).toBe(true);
-        });
+        }).eventually();
       }
     );
   });
