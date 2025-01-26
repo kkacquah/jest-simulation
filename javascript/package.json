@@ -1,6 +1,6 @@
 {
   "name": "simulacra-test",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A framework for simulating and testing agent conversations",
   "type": "module",
   "main": "dist/index.js",
