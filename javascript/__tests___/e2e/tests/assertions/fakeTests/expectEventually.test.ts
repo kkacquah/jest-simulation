@@ -6,7 +6,7 @@ describe('expectEventually', () => {
   describe('should eventually pass when condition becomes true on third turn', () => {
     let isThirdTurnPassed = false;
 
-    const inputFn = (state: SimulationAgentState) => {
+    const getAgentResponse = (state: SimulationAgentState) => {
       if (state.currentTurn === 2) { // Third turn (0-based index)
         isThirdTurnPassed = true;
       }
@@ -18,7 +18,7 @@ describe('expectEventually', () => {
       {
         role: 'test',
         task: 'test content',
-        inputFn,
+        getAgentResponse,
       },
       async ({ agent }) => {
         simulationExpect(agent.events, async () => {

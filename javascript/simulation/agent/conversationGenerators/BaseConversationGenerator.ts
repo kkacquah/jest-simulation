@@ -1,4 +1,3 @@
-import { EventEmitter } from 'events';
 
 /**
  * Represents a message in the conversation

@@ -7,7 +7,7 @@ describe('expectWhen', () => {
   describe('should pass when condition becomes true during simulation', () => {
     let currentTurn = 0;
 
-    const inputFn = (state: SimulationAgentState) => {
+    const getAgentResponse = (state: SimulationAgentState) => {
       currentTurn = state.currentTurn;
       return { role: 'user', content: `Message for turn ${state.currentTurn}` };
     };
@@ -17,7 +17,7 @@ describe('expectWhen', () => {
       {
         role: 'test',
         task: 'test content',
-        inputFn,
+        getAgentResponse,
         conversationGenerator: new DeterministicConversationGenerator([
           { role: 'assistant', content: 'First message' },
           { role: 'assistant', content: 'Important message' },

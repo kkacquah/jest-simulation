@@ -19,7 +19,7 @@ export interface AgentConstructorArgs {
   role: string;
   task: string;
   getAgentResponse: GetAgentResponseFunction;
-  generator?: AgentConversationGenerator;
+  conversationGenerator?: AgentConversationGenerator;
   maxTurns?: number;
   debug?: boolean;
 }
@@ -90,7 +90,7 @@ export class SimulationAgent extends TypedEventEmitter {
     super();
     this.getAgentResponse = args.getAgentResponse;
     this.maxTurns = args.maxTurns || DEFAULT_MAX_TURNS;
-    this.conversationGenerator = args.generator || new DeterministicConversationGenerator(agentResponses);
+    this.conversationGenerator = args.conversationGenerator || new DeterministicConversationGenerator(agentResponses);
     this.logger = new SimulationLogger(args.debug);
     this.events = new AgentEventEmitter();
     this.role = args.role;
