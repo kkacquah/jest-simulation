@@ -26,13 +26,13 @@ describe('Customer Support Model Tests', () => {
     jest.resetAllMocks();
   });
 
-    const inputFn = async (agentState: SimulationAgentState): Promise<ConversationMessage> => {
+    const inputFn = async (simulationAgentState: SimulationAgentState): Promise<ConversationMessage> => {
 
       try {
         // Get the agent's response through the graph
         const response = await app.invoke([{
           role: 'user',
-          content: agentState.lastResponse?.content ?? ''
+          content: simulationAgentState.lastResponse?.content ?? ''
         }]);
         
         // Return the last message from the graph as the assistant's response
@@ -58,7 +58,7 @@ describe('Customer Support Model Tests', () => {
       {
         role: 'frustrated customer who recently purchased a faulty laptop',
         task: 'You bought a laptop last week that keeps crashing. You have tried troubleshooting with tech support but nothing works. Now you want to request a refund for your purchase. Express your frustration politely but firmly.',
-        generator: new LLMConversationGenerator(),
+        conversationGenerator: new LLMConversationGenerator(),
         inputFn,
         debug: true,
         maxTurns: 10
@@ -76,7 +76,7 @@ describe('Customer Support Model Tests', () => {
         role: 'customer who recently purchased a new phone',
         task: 'You recently purchased a new phone from a local store. You are happy with the product but want to know more about the latest phone models.',
         inputFn,
-        generator: new LLMConversationGenerator(),
+        conversationGenerator: new LLMConversationGenerator(),
         debug: true,
         maxTurns: 10
       },

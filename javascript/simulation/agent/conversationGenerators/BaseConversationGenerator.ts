@@ -10,7 +10,7 @@ export interface ConversationMessage {
 
 /**
  * Abstract base class for generating agent conversation responses.
- * Implemented by various generators like FakeConversationGenerator and LLMConversationGenerator.
+ * Implemented by various generators like DeterministicConversationGenerator and LLMConversationGenerator.
  */
 export abstract class AgentConversationGenerator {
   abstract initialize(systemPrompt?: string): void

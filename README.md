@@ -1,59 +1,125 @@
 # Simulacra Framework
 
-A TypeScript framework for simulating and testing agent-based conversations in Jest. This framework allows you to create, run, and test conversational agents with deterministic behavior for testing purposes.
+A TypeScript framework for simulating and testing agent-based conversations in Jest. This framework allows you to create, run, and test conversational agents with both deterministic and LLM-powered behavior for testing purposes.
 
+## Features
+
+- Simulate conversations with deterministic or LLM-powered responses
+- Rich assertion API for testing agent behavior.
+- Automated reporting of simulation results. 
+- Extends the full power of[Jest's test framework](https://jestjs.io/).
+
+## Roadmap
+- [] Support for test parallelization
+- [] Support for (cheaper) simulation agent models.
+- [] LLM-as-judge transcript conversation transcript evaluation
+- [] Support "streamed input", which waits for an "stop" token before generating an agent response.
+- [] Anything else! We're open to suggestions!
+
+## Set up
+
+1. Install the framework using `npm install simulacra`
+2. Define your test using `simulationTest` in a file with a `agent.test.ts` extension
+3. Add OPENAI_API_KEY to your environment variables (if using LLM-powered responses)
+4. Run your new agent tests using `npx jest agent.test.ts`.
+
+Look at the [examples](./examples) for an example of a project setup to use the framework.
 
 ## Usage
 
-The framework is designed for easy testing with Jest. Use the FakeConversationGenerator to create deterministic tests:
+The framework provides two main ways to generate conversations:
 
-This code demonstrates a simulation test for a restaurant booking scenario using the Jest Simulation Framework. It tests whether an agent can successfully complete a reservation process. The test uses `simulationTest` function with the following components:
+1. `DeterministicConversationGenerator` for deterministic tests
+2. `LLMConversationGenerator` for testing with real language models
 
-1. Test description: "agent successfully completes restaurant booking"
-2. Test configuration object:
-   - `role`: Defines the user's persona
-   - `task`: Specifies the user's objective
-   - `inputFn`: Handles agent responses using a custom `YourConversationalAgent`
-   - `generator`: Creates a simulated conversation using `FakeConversationGenerator`
-3. Assertion function:
-   - Uses `eventually` to check the agent's events
-   - Verifies the booking details in the database match the expected reservation.
+Here's an example testing a customer support scenario:
 
 ```typescript
 simulationTest(
-  'agent successfully completes restaurant booking',
+  'should handle refund requests appropriately',
   {
-    role: "An elderly woman looking to help a friend make a reservation at Italian Restaurant",
-    task: "You are trying to speak with a restaurant booking agent in order to make a reservation.",
-    inputFn: (agentResponse) => YourConversationalAgent.respond(agentResponse),
-    generator: new FakeConversationGenerator([
-      { 
-        role: "assistant", 
-        content: "I'll help you make a reservation. What time and how many people?" 
-      },
-      { 
-        role: "assistant", 
-        content: "I can book a table for 4 people tomorrow at 7pm at Italian Restaurant. Should I proceed with the booking?" 
-      },
-      { 
-        role: "assistant", 
-        content: "Great! I've confirmed your reservation for tomorrow at 7pm for 4 people at Italian Restaurant. Your booking reference is #ABC123. Is there anything else you need?" 
-      }
-    ])
+    role: 'frustrated customer who recently purchased a faulty laptop',
+    task: 'You bought a laptop last week that keeps crashing. You have tried troubleshooting with tech support but nothing works. Now you want to request a refund.',
+    conversationGenerator: new LLMConversationGenerator(),
+    getAgentResponse: (simulationAgentState) => {
+      // Your agent logic here
+      return handleCustomerRequest(simulationAgentState.lastResponse?.content);
+    },
   },
   async ({ agent }) => {
-    eventually(agent.events, async () => {
-      const booking  = await db.getBooking("ABC123");
-      expect(bookings).toEqual({
-        restaurant: "Italian Restaurant",
-        time: "7pm",
-        date: "tomorrow",
-        guests: 4,
-        reference: "ABC123"
-      });
-    });
+    // Test that refund handler was called
+    simulationExpect(agent.events, async () => {
+      expect(mockHandleRefund).toHaveBeenCalled();
+    }).eventually();
   }
 );
 ```
+
+You can also use `DeterministicConversationGenerator` for to test a conversational agent with a specific set of messages:
+
+```typescript
+simulationTest(
+  'should handle a specific conversation flow',
+  {
+    role: 'customer seeking technical support',
+    task: 'You need help with your printer that keeps jamming',
+    conversationGenerator: new DeterministicConversationGenerator([
+      { 
+        role: "assistant", 
+        content: "I understand you're having issues with a printer jam. Have you tried removing all paper and checking for debris?" 
+      },
+      { 
+        role: "assistant", 
+        content: "Let's try resetting the printer. Please turn it off, wait 30 seconds, then turn it back on." 
+      },
+      { 
+        role: "assistant", 
+        content: "Great! The printer should now be working correctly. Is there anything else you need help with?" 
+      }
+    ]),
+    getAgentResponse: (simulationAgentState) => handleTechSupport(simulationAgentState.lastResponse?.content)
+  },
+  async ({ agent }) => {
+    simulationExpect(agent.events, async () => {
+      expect(mockPrinterReset).toHaveBeenCalled();
+    }).eventually();
+  }
+);
+```
+
+## Assertions
+
+The framework provides powerful assertion capabilities through `simulationExpect`:
+
+- `eventually()`: Asserts a condition is true by the end of the simulation
+
+```typescript
+// Assert something happens by the end of a simulation
+simulationExpect(simulationAgent.events, async (simulationAgent) => {
+  expect(simulationAgent.lastReceivedMessage?.content).toMatchSnapshot();
+}).eventually();
+```
+
+- `always()`: Asserts a condition remains true throughout the entire simulation
+
+```typescript
+// Assert something remains true throughout a simulation
+simulationExpect(simulationAgent.events, async (simulationAgent) => {
+  expect(mockDeleteUserData.notToBeCalled()).toBe(true);
+}).always();
+```
+
+- `when(condition)`: Asserts a condition when a specific state is met
+
+```typescript
+// Assert something when a condition is met during a simulation
+simulationExpect(simulationAgent.events, async (simulationAgent) => {
+  expect(mockDeleteUserData).toBeCalled();
+}).when(state => state.lastSimulationAgentResponse?.content === 'Please delete my data.');
+```
+
+## Reporting
+
+## License
 
 MIT

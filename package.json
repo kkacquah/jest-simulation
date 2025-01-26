@@ -1,5 +1,5 @@
 {
-  "name": "jest-simulation",
+  "name": "simulacra",
   "version": "1.0.0",
   "description": "A framework for simulating and testing agent conversations",
   "main": "dist/index.js",

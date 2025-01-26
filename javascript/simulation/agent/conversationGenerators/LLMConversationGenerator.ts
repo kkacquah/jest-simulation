@@ -1,4 +1,4 @@
-import { AgentConversationGenerator, ConversationMessage } from './AgentConversationGenerator';
+import { AgentConversationGenerator, ConversationMessage } from './BaseConversationGenerator';
 import { OpenAIClient } from '../../llm/llm';
 
 /**

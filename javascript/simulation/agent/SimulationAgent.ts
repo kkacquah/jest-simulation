@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
-import { AgentConversationGenerator, ConversationMessage } from './conversationGenerators/AgentConversationGenerator';
+import { AgentConversationGenerator, ConversationMessage } from './conversationGenerators/BaseConversationGenerator';
 import { SimulationLogger } from './logger';
-import { FakeConversationGenerator } from './conversationGenerators/FakeConversationGenerator';
+import { DeterministicConversationGenerator } from './conversationGenerators/DeterministicConversationGenerator';
 
 export interface SimulationAgentState {
   // The current turn of the simulation
@@ -13,12 +13,12 @@ export interface SimulationAgentState {
   [key: string]: unknown;
 }
 
-export type InputFunction = (state: SimulationAgentState) => Promise<ConversationMessage> | ConversationMessage;
+export type GetAgentResponseFunction = (state: SimulationAgentState) => Promise<ConversationMessage> | ConversationMessage;
 
 export interface AgentConstructorArgs {
   role: string;
   task: string;
-  inputFn: InputFunction;
+  getAgentResponse: GetAgentResponseFunction;
   generator?: AgentConversationGenerator;
   maxTurns?: number;
   debug?: boolean;
@@ -80,17 +80,17 @@ export class SimulationAgent extends TypedEventEmitter {
   public state: SimulationAgentState | null = null;
   private role: string;
   private task: string;
-  private inputFn: InputFunction;
+  private getAgentResponse: GetAgentResponseFunction;
   private maxTurns: number;
-  private generator: AgentConversationGenerator;
+  private conversationGenerator: AgentConversationGenerator;
   private logger: SimulationLogger;
   public events: AgentEventEmitter;
 
   constructor(args: AgentConstructorArgs) {
     super();
-    this.inputFn = args.inputFn;
+    this.getAgentResponse = args.getAgentResponse;
     this.maxTurns = args.maxTurns || DEFAULT_MAX_TURNS;
-    this.generator = args.generator || new FakeConversationGenerator(agentResponses);
+    this.conversationGenerator = args.generator || new DeterministicConversationGenerator(agentResponses);
     this.logger = new SimulationLogger(args.debug);
     this.events = new AgentEventEmitter();
     this.role = args.role;
@@ -119,7 +119,7 @@ export class SimulationAgent extends TypedEventEmitter {
 
   async initialize(): Promise<void> {
     
-    this.generator.initialize(this.getSystemPromptFromRoleAndTask(this.role, this.task));
+    this.conversationGenerator.initialize(this.getSystemPromptFromRoleAndTask(this.role, this.task));
     await this.emit(SimulationEvents.INITIALIZED, this.state!);
     this.setState({ 
       lastResponse: null,
@@ -142,14 +142,14 @@ export class SimulationAgent extends TypedEventEmitter {
     await this.emit(SimulationEvents.TURN_START, this.state);
     
     // Get input for the current turn using the inputFn
-    const input = await this.inputFn(this.state);
+    const input = await this.getAgentResponse(this.state);
     // Update the state with the new input
     this.setState({ ...this.state, input, currentTurn: this.state.currentTurn });
     // Log the user's input
     this.logger.logConversation('AGENT', input.content);
 
     // Generate a response using the conversation generator
-    const response = await this.generator.generateResponse(input);
+    const response = await this.conversationGenerator.generateResponse(input);
     // Update the state with the new response and turn information
     this.setState({ 
       lastResponse: response,

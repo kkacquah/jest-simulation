@@ -36,7 +36,7 @@ describe('expectEventually', () => {
       {
         role: 'test',
         task: 'test content',
-        inputFn: (state: SimulationAgentState) => ({
+        getAgentResponse: (state: SimulationAgentState) => ({
           role: 'user',
           content: `Message for turn ${state.currentTurn}`,
         }),

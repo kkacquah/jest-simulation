@@ -1,7 +1,7 @@
-import { AgentConversationGenerator, ConversationMessage } from './AgentConversationGenerator';
+import { AgentConversationGenerator, ConversationMessage } from './BaseConversationGenerator';
 
 /**
- * Default responses used by FakeConversationGenerator when no responses are provided
+ * Default responses used by DeterministicConversationGenerator when no responses are provided
  */
 export const DEFAULT_RESPONSES: ConversationMessage[] = [
   { role: 'assistant', content: 'Hello! How can I help you today?' },
@@ -13,7 +13,7 @@ export const DEFAULT_RESPONSES: ConversationMessage[] = [
  * A fake generator that returns predefined responses.
  * Useful for testing the simulation framework without a real LLM.
  */
-export class FakeConversationGenerator extends AgentConversationGenerator {
+export class DeterministicConversationGenerator extends AgentConversationGenerator {
   private responses: ConversationMessage[];
   private currentIndex: number = 0;
 

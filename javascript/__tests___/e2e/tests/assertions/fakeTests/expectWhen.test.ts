@@ -1,5 +1,5 @@
 import { simulationExpect } from '../../../../../assertions/expect';
-import { FakeConversationGenerator } from '../../../../../simulation/agent/conversationGenerators/FakeConversationGenerator';
+import { DeterministicConversationGenerator } from '../../../../../simulation/agent/conversationGenerators/DeterministicConversationGenerator';
 import { SimulationAgentState } from '../../../../../simulation/agent/SimulationAgent';
 import { simulationTest } from '../../../../../simulation/simulationTest';
 
@@ -18,7 +18,7 @@ describe('expectWhen', () => {
         role: 'test',
         task: 'test content',
         inputFn,
-        generator: new FakeConversationGenerator([
+        conversationGenerator: new DeterministicConversationGenerator([
           { role: 'assistant', content: 'First message' },
           { role: 'assistant', content: 'Important message' },
           { role: 'assistant', content: 'Final message' }
@@ -46,7 +46,7 @@ describe('expectWhen', () => {
       {
         role: 'test',
         task: 'test content',
-        inputFn: (state: SimulationAgentState) => {
+        getAgentResponse: (state: SimulationAgentState) => {
           messageCount++;
           return { role: 'user', content: `Message ${messageCount}` };
         }
@@ -74,7 +74,7 @@ describe('expectWhen', () => {
       {
         role: 'test',
         task: 'test content',
-        inputFn: (state: SimulationAgentState) => {
+        getAgentResponse: (state: SimulationAgentState) => {
           externalCounter++;
           return { role: 'user', content: `Message ${state.currentTurn}` };
         }

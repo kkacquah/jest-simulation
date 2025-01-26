@@ -1,5 +1,5 @@
-import path = require('path');
-import { runJestSimulation } from '../../../../runJestSimulation';
+import * as path from 'path';
+import { runJestSimulation } from '../../../../runSimulacraTest';
 
 describe('expect', () => {
   describe('eventually', () => {

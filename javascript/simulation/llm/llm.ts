@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import { ConversationMessage } from '../agent/conversationGenerators/AgentConversationGenerator';
+import { ConversationMessage } from '../agent/conversationGenerators/BaseConversationGenerator';
 
 export class OpenAIClient {
   private client: OpenAI;
