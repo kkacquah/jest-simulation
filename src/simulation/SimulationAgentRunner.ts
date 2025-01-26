@@ -23,12 +23,12 @@ export class SimulationAgentRunner {
 
   async runAllTurns(): Promise<void> {
     // Initialize agent if not already initialized
-    if (!this.agent.state.initialized) {
+    if (!this.agent.state) {
       await this.agent.initialize();
     }
 
     // Run turns until complete
-    while (!this.agent.state.isComplete) {
+    while (this.agent.state && !this.agent.state.isComplete) {
       await this.agent.nextTurn();
     }
   }

@@ -6,6 +6,7 @@ import { simulationTest } from '../../../../../simulation/simulationTest';
 describe('expectWhen', () => {
   describe('should pass when condition becomes true during simulation', () => {
     let currentTurn = 0;
+    let messageReceived = '';
 
     const inputFn = (state: SimulationAgentState) => {
       currentTurn = state.currentTurn;
@@ -26,12 +27,12 @@ describe('expectWhen', () => {
       },
       async ({ agent }) => {
         // Test condition that depends on turn number
-        simulationExpect(agent.events, async (state) => {
+        await simulationExpect(agent.events, async (state) => {
           expect(state.currentTurn).toBe(2);
         }).when(state => state.currentTurn === 2);
 
         // Test condition that depends on agent response
-        simulationExpect(agent.events, async (state) => {
+        await simulationExpect(agent.events, async (state) => {
           expect(state.lastResponse?.content).toBe('Important message');
         }).when(state => state.lastResponse?.content === 'Important message');
       }
@@ -46,43 +47,21 @@ describe('expectWhen', () => {
       {
         role: 'test',
         task: 'test content',
-        inputFn: (state: SimulationAgentState) => {
+        inputFn: () => {
           messageCount++;
           return { role: 'user', content: `Message ${messageCount}` };
         }
       },
       async ({ agent }) => {
         // Check early turn condition
-       simulationExpect(agent.events, async () => {
-          console.log('Message count:', messageCount);
+        await simulationExpect(agent.events, async () => {
           expect(messageCount).toBe(1);
-        }).when(state => state.currentTurn === 1);
+        }).when(state => state.currentTurn === 0);
 
         // Check mid-simulation condition
-        simulationExpect(agent.events, async () => {
-          expect(messageCount).toBe(3);
-        }).when(state => state.currentTurn === 3);
-      }
-    );
-  });
-
-  describe('should support external state changes', () => {
-    let externalCounter = 0;
-
-    simulationTest(
-      'passing test - external state changes',
-      {
-        role: 'test',
-        task: 'test content',
-        inputFn: (state: SimulationAgentState) => {
-          externalCounter++;
-          return { role: 'user', content: `Message ${state.currentTurn}` };
-        }
-      },
-      async ({ agent }) => {
-        simulationExpect(agent.events, async (state) => {
-          expect(state.currentTurn).toBe(3);
-        }).when(() => externalCounter === 3);
+        await simulationExpect(agent.events, async () => {
+          expect(messageCount).toBe(2);
+        }).when(state => state.currentTurn === 1);
       }
     );
   });

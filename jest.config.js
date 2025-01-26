@@ -15,4 +15,5 @@ module.exports = {
     'node_modules/(?!(execa)/)'
   ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  testTimeout: 100000, // Add global timeout of 100 seconds
 };

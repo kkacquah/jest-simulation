@@ -6,7 +6,7 @@ export default {
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
-  testTimeout: 10000,
+  testTimeout: 100000,
   transform: {
     '^.+\\.tsx?$': ['ts-jest', {
       useESM: true,

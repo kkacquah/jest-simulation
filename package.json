@@ -1,7 +1,7 @@
 {
   "name": "jest-simulation",
   "version": "1.0.0",
-  "description": "A Jest extension for simulation testing",
+  "description": "A framework for simulating and testing agent conversations",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -19,6 +19,9 @@
   "license": "MIT",
   "peerDependencies": {
     "jest": ">=29.0.0"
+  },
+  "dependencies": {
+    "openai": "^4.80.1"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
