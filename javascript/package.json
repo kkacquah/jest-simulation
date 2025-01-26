@@ -1,5 +1,5 @@
 {
-  "name": "simulacra",
+  "name": "simulacra-test",
   "version": "1.0.0",
   "description": "A framework for simulating and testing agent conversations",
   "type": "module",
