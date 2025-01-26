@@ -1,4 +1,4 @@
-# Jest Simulation Framework
+# Simulacra Framework
 
 A TypeScript framework for simulating and testing agent-based conversations in Jest. This framework allows you to create, run, and test conversational agents with deterministic behavior for testing purposes.
 
