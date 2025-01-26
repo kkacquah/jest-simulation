@@ -29,7 +29,7 @@ Look at the [examples](./examples) for an example of a project setup to use the 
 
 The framework provides two main ways to generate conversations:
 
-1. `DeterministicConversationGenerator` for deterministic tests
+1. `DeterministicConversationGenerator` for deterministic tests with predefined user messages
 2. `LLMConversationGenerator` for testing with real language models
 
 Here's an example testing a customer support scenario:
@@ -38,9 +38,11 @@ Here's an example testing a customer support scenario:
 simulationTest(
   'should handle refund requests appropriately',
   {
-    role: 'frustrated customer who recently purchased a faulty laptop',
-    task: 'You bought a laptop last week that keeps crashing. You have tried troubleshooting with tech support but nothing works. Now you want to request a refund.',
-    conversationGenerator: new LLMConversationGenerator(),
+    conversationGenerator: new LLMConversationGenerator({
+      role: 'frustrated customer who recently purchased a faulty laptop',
+      task: 'You bought a laptop last week that keeps crashing. You have tried troubleshooting with tech support but nothing works. Now you want to request a refund.',
+      model: 'gpt-4' // optional, defaults to gpt-4
+    }),
     getAgentResponse: (simulationAgentState) => {
       // Your agent logic here
       return handleCustomerRequest(simulationAgentState.lastResponse?.content);
@@ -55,27 +57,16 @@ simulationTest(
 );
 ```
 
-You can also use `DeterministicConversationGenerator` for to test a conversational agent with a specific set of messages:
+You can also use `DeterministicConversationGenerator` to test a conversational agent with a specific sequence of user messages:
 
 ```typescript
 simulationTest(
   'should handle a specific conversation flow',
   {
-    role: 'customer seeking technical support',
-    task: 'You need help with your printer that keeps jamming',
     conversationGenerator: new DeterministicConversationGenerator([
-      { 
-        role: "assistant", 
-        content: "I understand you're having issues with a printer jam. Have you tried removing all paper and checking for debris?" 
-      },
-      { 
-        role: "assistant", 
-        content: "Let's try resetting the printer. Please turn it off, wait 30 seconds, then turn it back on." 
-      },
-      { 
-        role: "assistant", 
-        content: "Great! The printer should now be working correctly. Is there anything else you need help with?" 
-      }
+      "I understand you're having issues with a printer jam. Have you tried removing all paper and checking for debris?",
+      "Let's try resetting the printer. Please turn it off, wait 30 seconds, then turn it back on.",
+      "Great! The printer should now be working correctly. Is there anything else you need help with?"
     ]),
     getAgentResponse: (simulationAgentState) => handleTechSupport(simulationAgentState.lastResponse?.content)
   },

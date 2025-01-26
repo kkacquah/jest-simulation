@@ -1,24 +1,33 @@
 import { NodeInterrupt } from '@langchain/langgraph';
-import { simulationTest } from '../../../src/simulation/simulationTest';
-import { simulationExpect } from '../../../src/assertions/expect';
-import { LLMConversationGenerator } from '../../../src/simulation/agent/conversationGenerators/LLMConversationGenerator';
-import { SimulationAgentState } from '../../../src/simulation/agent/SimulationAgent';
-import { ConversationMessage } from '../../../src/simulation/agent/conversationGenerators/AgentConversationGenerator';
+import { simulationTest } from 'simulacra-test';
+import { simulationExpect } from 'simulacra-test';
+import { LLMConversationGenerator } from 'simulacra-test';
+import { SimulationAgentState } from 'simulacra-test';
+import { ConversationMessage } from 'simulacra-test';
 import { app } from '../src/customer_support_small_model';
-// Mock all node modules
-jest.mock('../src/nodes/RefundHandler');
-
-// TODO: I'm unsure why I need this. I tried to set a longer timeout in jest.config.js
-jest.setTimeout(100000);
-// Import the actual implementation after mocking
+import { jest, describe, beforeEach, it, expect } from '@jest/globals';
 import { RefundHandler } from '../src/nodes/RefundHandler';
 
+// Mock refund handler module.
+jest.mock('../src/nodes/RefundHandler');
+
+// Set timeout for long-running tests
+jest.setTimeout(100000);
+
 describe('Customer Support Model Tests', () => {
-  let mockHandleRefund: jest.Mock<any>;
-  
+  let mockHandleRefund: jest.Mock;
+
   beforeEach(() => {
-    mockHandleRefund = (RefundHandler as jest.Mock).mockImplementation(() => ({
-      handle: jest.fn().mockResolvedValue({ type: 'refund_response', content: 'Mock refund response' }),
+    // Create a mock implementation of RefundHandler
+    mockHandleRefund = jest.fn().mockReturnValue({
+      messages: {
+        role: "assistant",
+        content: "Mock refund response"
+      }
+    });
+    // Mock the entire class
+    jest.mocked(RefundHandler).mockImplementation(() => ({
+      handle: mockHandleRefund
     }));
   });
 
@@ -26,7 +35,7 @@ describe('Customer Support Model Tests', () => {
     jest.resetAllMocks();
   });
 
-    const inputFn = async (simulationAgentState: SimulationAgentState): Promise<ConversationMessage> => {
+    const getAgentResponse = async (simulationAgentState: SimulationAgentState): Promise<ConversationMessage> => {
 
       try {
         // Get the agent's response through the graph
@@ -59,7 +68,7 @@ describe('Customer Support Model Tests', () => {
         role: 'frustrated customer who recently purchased a faulty laptop',
         task: 'You bought a laptop last week that keeps crashing. You have tried troubleshooting with tech support but nothing works. Now you want to request a refund for your purchase. Express your frustration politely but firmly.',
         conversationGenerator: new LLMConversationGenerator(),
-        inputFn,
+        getAgentResponse,
         debug: true,
         maxTurns: 10
       },
@@ -75,7 +84,7 @@ describe('Customer Support Model Tests', () => {
       {
         role: 'customer who recently purchased a new phone',
         task: 'You recently purchased a new phone from a local store. You are happy with the product but want to know more about the latest phone models.',
-        inputFn,
+        getAgentResponse,
         conversationGenerator: new LLMConversationGenerator(),
         debug: true,
         maxTurns: 10

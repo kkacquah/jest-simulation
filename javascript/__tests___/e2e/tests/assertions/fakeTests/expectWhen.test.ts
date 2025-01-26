@@ -2,6 +2,7 @@ import { simulationExpect } from '../../../../../assertions/expect';
 import { DeterministicConversationGenerator } from '../../../../../simulation/agent/conversationGenerators/DeterministicConversationGenerator';
 import { SimulationAgentState } from '../../../../../simulation/agent/SimulationAgent';
 import { simulationTest } from '../../../../../simulation/simulationTest';
+import { DEFAULT_CONVERSATION_GENERATOR_MESSAGES } from '../utils';
 
 describe('expectWhen', () => {
   describe('should pass when condition becomes true during simulation', () => {
@@ -15,13 +16,11 @@ describe('expectWhen', () => {
     simulationTest(
       'passing test - condition met on specific turn',
       {
-        role: 'test',
-        task: 'test content',
         getAgentResponse,
         conversationGenerator: new DeterministicConversationGenerator([
-          { role: 'assistant', content: 'First message' },
-          { role: 'assistant', content: 'Important message' },
-          { role: 'assistant', content: 'Final message' }
+          'First message',
+          'Important message',
+          'Final message'
         ])
       },
       async ({ agent }) => {
@@ -32,8 +31,8 @@ describe('expectWhen', () => {
 
         // Test condition that depends on agent response
         simulationExpect(agent.events, async (state) => {
-          expect(state.lastResponse?.content).toBe('Important message');
-        }).when(state => state.lastResponse?.content === 'Important message');
+          expect(state.lastSimulationAgentResponse?.content).toBe('Important message');
+        }).when(state => state.lastSimulationAgentResponse?.content === 'Important message');
       }
     );
   });
@@ -44,17 +43,16 @@ describe('expectWhen', () => {
     simulationTest(
       'passing test - multiple conditions',
       {
-        role: 'test',
-        task: 'test content',
-        getAgentResponse: (state: SimulationAgentState) => {
+        conversationGenerator: new DeterministicConversationGenerator(DEFAULT_CONVERSATION_GENERATOR_MESSAGES),
+        getAgentResponse: () => {
           messageCount++;
           return { role: 'user', content: `Message ${messageCount}` };
         }
+        
       },
       async ({ agent }) => {
         // Check early turn condition
        simulationExpect(agent.events, async () => {
-          console.log('Message count:', messageCount);
           expect(messageCount).toBe(1);
         }).when(state => state.currentTurn === 1);
 
@@ -72,12 +70,11 @@ describe('expectWhen', () => {
     simulationTest(
       'passing test - external state changes',
       {
-        role: 'test',
-        task: 'test content',
         getAgentResponse: (state: SimulationAgentState) => {
           externalCounter++;
           return { role: 'user', content: `Message ${state.currentTurn}` };
-        }
+        },
+        conversationGenerator: new DeterministicConversationGenerator(DEFAULT_CONVERSATION_GENERATOR_MESSAGES)
       },
       async ({ agent }) => {
         simulationExpect(agent.events, async (state) => {

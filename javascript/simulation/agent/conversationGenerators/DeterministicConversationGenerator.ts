@@ -1,32 +1,26 @@
 import { AgentConversationGenerator, ConversationMessage } from './BaseConversationGenerator';
 
 /**
- * Default responses used by DeterministicConversationGenerator when no responses are provided
- */
-export const DEFAULT_RESPONSES: ConversationMessage[] = [
-  { role: 'assistant', content: 'Hello! How can I help you today?' },
-  { role: 'assistant', content: 'I understand. Let me help you with that.' },
-  { role: 'assistant', content: 'Is there anything else you need?' }
-];
-
-/**
- * A fake generator that returns predefined responses.
+ * A fake generator that converts a list of strings into user messages.
  * Useful for testing the simulation framework without a real LLM.
  */
 export class DeterministicConversationGenerator extends AgentConversationGenerator {
-  private responses: ConversationMessage[];
+  private messages: ConversationMessage[];
   private currentIndex: number = 0;
 
-  constructor(responses: ConversationMessage[] = DEFAULT_RESPONSES) {
+  constructor(messages: string[]) {
     super();
-    this.responses = responses;
+    this.messages = messages.map(content => ({
+      role: 'user',
+      content
+    }));
   }
 
   initialize(): void {}
 
   async generateResponse(_input: ConversationMessage): Promise<ConversationMessage> {
-    const response = this.responses[this.currentIndex];
-    this.currentIndex = (this.currentIndex + 1) % this.responses.length;
-    return response;
+    const message = this.messages[this.currentIndex];
+    this.currentIndex = (this.currentIndex + 1) % this.messages.length;
+    return message;
   }
 }

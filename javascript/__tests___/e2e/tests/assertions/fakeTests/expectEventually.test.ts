@@ -1,6 +1,8 @@
 import { simulationExpect } from '../../../../../assertions/expect';
+import { DeterministicConversationGenerator } from '../../../../../simulation/agent/conversationGenerators/DeterministicConversationGenerator';
 import { SimulationAgentState } from '../../../../../simulation/agent/SimulationAgent';
 import { simulationTest } from '../../../../../simulation/simulationTest';
+import { DEFAULT_CONVERSATION_GENERATOR_MESSAGES } from '../utils';
 
 describe('expectEventually', () => {
   describe('should eventually pass when condition becomes true on third turn', () => {
@@ -16,9 +18,8 @@ describe('expectEventually', () => {
     simulationTest(
       'passing test',
       {
-        role: 'test',
-        task: 'test content',
         getAgentResponse,
+        conversationGenerator: new DeterministicConversationGenerator(DEFAULT_CONVERSATION_GENERATOR_MESSAGES)
       },
       async ({ agent }) => {
         simulationExpect(agent.events, async () => {
@@ -34,12 +35,11 @@ describe('expectEventually', () => {
     simulationTest(
       'failing test',
       {
-        role: 'test',
-        task: 'test content',
         getAgentResponse: (state: SimulationAgentState) => ({
           role: 'user',
           content: `Message for turn ${state.currentTurn}`,
         }),
+        conversationGenerator: new DeterministicConversationGenerator(DEFAULT_CONVERSATION_GENERATOR_MESSAGES)
       },
       async ({ agent }) => {
         simulationExpect(agent.events, async () => {
