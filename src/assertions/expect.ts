@@ -39,6 +39,24 @@ class SimulationExpectation {
   eventually(): Promise<void> {
     return this.when(state => state.isComplete);
   }
+
+  always(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const checkAssertion = async (state: SimulationAgentState) => {
+        try {
+          await this.assertionFn(state);
+        } catch (error) {
+          reject(error);
+        }
+      };
+
+      this.eventEmitter.on(SimulationEvents.TURN_END, checkAssertion);
+      this.eventEmitter.on(SimulationEvents.COMPLETE, async (state) => {
+        await checkAssertion(state);
+        resolve();
+      });
+    });
+  }
 }
 
 export const simulationExpect = (

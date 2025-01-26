@@ -69,4 +69,21 @@ describe('Customer Support Model Tests', () => {
         }).eventually();
       }
     );
+
+    simulationTest(
+      'should not call handleRefund when processing non-refund request',
+      {
+        role: 'customer who recently purchased a new phone',
+        task: 'You recently purchased a new phone from a local store. You are happy with the product but want to know more about the latest phone models.',
+        inputFn,
+        generator: new LLMConversationGenerator(),
+        debug: true,
+        maxTurns: 10
+      },
+      async ({ agent }) => {
+        simulationExpect(agent.events, async () => {
+          expect(mockHandleRefund).not.toHaveBeenCalled();
+        }).always();
+      }
+    );
   });
