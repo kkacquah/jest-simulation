@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SimulationReporter should format failed test output correctly 1`] = `
+"
+Starting Simulation Tests...
+"
+`;
+
+exports[`SimulationReporter should format successful test output correctly 1`] = `
+"
+Starting Simulation Tests...
+
+[32m✓ passing test[0m
+
+Simulation Test Results:
+Total Tests: 1
+Passed: 1
+Failed: 0
+Duration: 0.731s
+"
+`;

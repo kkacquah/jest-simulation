@@ -1,6 +1,6 @@
-# Simulacra Framework
+# SimulacraJS
 
-A TypeScript framework for simulating and testing agent-based conversations in Jest. This framework allows you to create, run, and test conversational agents with both deterministic and LLM-powered behavior for testing purposes.
+A TypeScript framework for simulating conversations with conversational agents in Jest. This framework define simulation agents that speak with your conversational agents with a rich assertion API for you to test expected agent behavior.
 
 ## Features
 

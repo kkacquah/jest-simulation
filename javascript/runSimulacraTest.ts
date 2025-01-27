@@ -1,26 +1,29 @@
-import { resolve } from "path";
-
 const execa = require('execa');
+import { resolve } from 'path';
 
 interface JestSimulationOptions {
   args?: string[];
-  [key: string]: any;
+  // Debug mode, allows you to see output of runSimulacraTest.
+  debug?: boolean;
 }
 
-export async function runJestSimulation(testFile: string, options: JestSimulationOptions = {}) {
+export async function runSimulacraTest(testFile: string, options: JestSimulationOptions = {}) {
   const jestBin = resolve(__dirname, 'node_modules/jest/bin/jest');
   const configPath = resolve(__dirname, 'jest.simulacra.config.ts');
-  const { args = [], ...execaOptions } = options;
+  const { args = [], debug = false, ...execaOptions } = options;
   
   const result = await execa(
     'node',
     [jestBin, testFile, '--no-color', '-c', configPath, ...args],
     {
       reject: false,
-      stdio: 'inherit', 
       ...execaOptions,
     }
   );
+
+  if (debug && result.stdout) {
+    console.log(result.stdout);
+  }
 
   return result;
 }

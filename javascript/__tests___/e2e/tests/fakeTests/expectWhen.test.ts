@@ -1,8 +1,8 @@
-import { simulationExpect } from '../../../../../assertions/expect';
-import { DeterministicConversationGenerator } from '../../../../../simulation/agent/conversationGenerators/DeterministicConversationGenerator';
-import { SimulationAgentState } from '../../../../../simulation/agent/SimulationAgent';
-import { simulationTest } from '../../../../../simulation/simulationTest';
-import { DEFAULT_CONVERSATION_GENERATOR_MESSAGES } from '../utils';
+import { simulationExpect } from '../../../../assertions/expect';
+import { DeterministicConversationGenerator } from '../../../../simulation/agent/conversationGenerators/DeterministicConversationGenerator';
+import { SimulationAgentState } from '../../../../simulation/agent/SimulationAgent';
+import { simulationTest } from '../../../../simulation/simulationTest';
+import { DEFAULT_CONVERSATION_GENERATOR_MESSAGES } from '../assertions/utils';
 
 describe('expectWhen', () => {
   describe('should pass when condition becomes true during simulation', () => {

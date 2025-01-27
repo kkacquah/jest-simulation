@@ -16,25 +16,17 @@ import { AgentConstructorArgs, SimulationAgent } from "./agent/SimulationAgent";
  */
 export class SimulationAgentRunner {
   private agent: SimulationAgent;
+  private messages: ConversationMessage[] = [];
 
   constructor(agentArgs: AgentConstructorArgs) {
     this.agent = new SimulationAgent(agentArgs);
   }
 
-  // If we're running in Jest, report the messages
-  reportTestMessages(newMessages: ConversationMessage[]): void {
-    if (global.jasmine) {
-      const currentTest = (global as any).jasmine.currentTest;
-      const reporter = global.__SIMULATION_REPORTER__;
-      if (reporter && currentTest) {
-        reporter.addSimulationMessages(currentTest.testPath, newMessages);
-      }
-    }
+  appendMessages(newMessages: ConversationMessage[]): void {
+    this.messages.push(...newMessages);
   }
 
   async runAllTurns(): Promise<void> {
-    // Full set of messages from the simulation.
-    const simulationMessages: ConversationMessage[] = [];
     // Initialize agent if not already initialized.
     if (!this.agent.state) {
       await this.agent.initialize();
@@ -46,10 +38,31 @@ export class SimulationAgentRunner {
         const newState = await this.agent.nextTurn();
         const newMessages = [newState.lastAgentResponse, newState.lastSimulationAgentResponse]
           .filter((message): message is ConversationMessage => message !== null);
-        this.reportTestMessages(newMessages);
+        this.appendMessages(newMessages);
     
-      } catch (error) {
+      } catch (error: Error | any) {
         console.error(`Error processing turn: ${error}`);
+        this.completeTest(error);
+        throw error;
+      }
+    }
+
+    // Complete the test, if not already completed
+    this.completeTest();
+  }
+
+  completeTest(error?: Error): void {
+    if (global.jasmine) {
+      const currentTest = (global as any).jasmine.currentTest;
+      const reporter = global.__SIMULATION_REPORTER__;
+      if (reporter && currentTest) {
+        console.log(`\nTest: ${currentTest.title}`);
+        console.log(`\nSimulation Result: ${this.messages}`);
+        console.log(`\nError: ${error}`);
+        reporter.addSimulationMessages(currentTest.testPath, {
+          messages: this.messages,
+          error
+        });
       }
     }
   }

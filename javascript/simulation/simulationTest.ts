@@ -23,8 +23,8 @@ const createSimulationTest = (jestTestFn: jest.It) => {
       const runner = new SimulationAgentRunner(agentArgs);
       const agent = runner.getAgent();
       const context: SimulationContext = { agent, logs };
-      await fn(context);
-      await runner.runAllTurns();
+        await fn(context);
+        await runner.runAllTurns();
     });
   };
 };
