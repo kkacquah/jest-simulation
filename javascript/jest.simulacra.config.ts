@@ -1,6 +1,10 @@
-import type { Config } from 'jest';
+import type { Config } from '@jest/types';
 
-const config: Config = {
+
+/**
+ * The jest config that tests against our current jest config uses.
+ */
+const config: Config.InitialOptions = {
   preset: 'ts-jest/presets/default-esm',
   testEnvironment: 'node',
   extensionsToTreatAsEsm: ['.ts'],
@@ -17,7 +21,8 @@ const config: Config = {
   ],
   setupFilesAfterEnv: [
     '<rootDir>/jest/setup.ts'
-  ]
+  ],
+
 };
 
 export default config;

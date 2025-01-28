@@ -15,10 +15,9 @@ describe("SimulationReporter", () => {
     expect(result.stdout).toMatchSnapshot();
   });
 
-  it.only("should format failed test output correctly", async () => {
+  it("should format failed test output correctly", async () => {
     const result = await runSimulacraTest(testFile, {
       args: ["-t", "should fail when condition never becomes true"],
-      debug: true,
     });
 
     expect(result.stdout).toMatchSnapshot();

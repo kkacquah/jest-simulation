@@ -15,14 +15,14 @@ In /Users/kennethacquah/simulacra/javascript/__tests___/e2e/tests/fakeTests/expe
   18. [36m[user][0m Have a great day!
   (12 earlier steps not shown)
 
-  [31mexpect(received).toBe(expected) // Object.is equality
+  [31m[2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
 
-Expected: true
-Received: false[0m
+Expected: [32mtrue[39m
+Received: [31mfalse[39m[0m
   Stack trace:
     
-    Expected: true
-    Received: false
+    Expected: [32mtrue[39m
+    Received: [31mfalse[39m
     at SimulationExpectation.assertionFn (/Users/kennethacquah/simulacra/javascript/__tests___/e2e/tests/fakeTests/expectEventually.test.ts:47:37)
     at AgentEventEmitter.checkCondition (/Users/kennethacquah/simulacra/javascript/assertions/expect.ts:31:24)
 

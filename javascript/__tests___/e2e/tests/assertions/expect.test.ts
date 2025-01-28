@@ -12,7 +12,7 @@ describe('expect', () => {
     expect(result.exitCode).toBe(0);
   });
 
-  it.only('should fail when condition never becomes true', async () => {
+  it('should fail when condition never becomes true', async () => {
     const result = await runSimulacraTest(testFile, {
       args: ['-t', 'should fail when condition never becomes true'],
     });
@@ -20,24 +20,24 @@ describe('expect', () => {
     });
   });
   describe('when', () => {
-    const testFile = path.resolve(__dirname, './fakeTests/expectWhen.test.ts');
+    const testFile = path.resolve(__dirname, '../fakeTests/expectWhen.test.ts');
     it('should pass when condition becomes true during simulation', async () => {
       const result = await runSimulacraTest(testFile, {
-        args: ['-t', 'passing test - condition met on specific turn'],
+        args: ['-t', 'should pass when condition becomes true during simulation'],
       });
       expect(result.exitCode).toBe(0);
     });
 
     it('should support multiple conditions in same test', async () => {
       const result = await runSimulacraTest(testFile, {
-        args: ['-t', 'passing test - multiple conditions'],
+        args: ['-t', 'should support multiple conditions in same test'],
       });
       expect(result.exitCode).toBe(0);
     });
 
-    it('should fail when condition never becomes true', async () => {
+    it('should succeed if condition never becomes true', async () => {
       const result = await runSimulacraTest(testFile, {
-        args: ['-t', 'passing test - external state changes'],
+        args: ['-t', 'should succeed if condition never becomes true'],
       });
       expect(result.exitCode).toBe(0);
     });

@@ -6,15 +6,9 @@ import { DEFAULT_CONVERSATION_GENERATOR_MESSAGES } from '../assertions/utils';
 
 describe('expectWhen', () => {
   describe('should pass when condition becomes true during simulation', () => {
-    let currentTurn = 0;
-
-    const getAgentResponse = (state: SimulationAgentState) => {
-      currentTurn = state.currentTurn;
-      return { role: 'user', content: `Message for turn ${state.currentTurn}` };
-    };
 
     simulationTest(
-      'passing test - condition met on specific turn',
+      'should pass when condition becomes true during simulation',
       {
         getAgentResponse: (state: SimulationAgentState) => {
           return { role: 'assistant', content: `Message for turn ${state.currentTurn}` };
@@ -54,12 +48,12 @@ describe('expectWhen', () => {
       },
       async ({ agent }) => {
         // Check early turn condition
-       simulationExpect(agent.events, async () => {
+       simulationExpect(agent.events, async (state) => {
           expect(messageCount).toBe(1);
         }).when(state => state.currentTurn === 1);
 
         // Check mid-simulation condition
-        simulationExpect(agent.events, async () => {
+        simulationExpect(agent.events, async (state) => {
           expect(messageCount).toBe(3);
         }).when(state => state.currentTurn === 3);
       }
@@ -82,6 +76,26 @@ describe('expectWhen', () => {
         simulationExpect(agent.events, async (state) => {
           expect(state.currentTurn).toBe(3);
         }).when(() => externalCounter === 3);
+      }
+    );
+  });
+
+  describe('should succeed if condition never becomes true', () => {
+    let externalCounter = 0;
+
+    simulationTest(
+      'passing test - external state changes',
+      {
+        getAgentResponse: (state: SimulationAgentState) => {
+          externalCounter++;
+          return { role: 'assistant', content: `Message ${state.currentTurn}` };
+        },
+        conversationGenerator: new DeterministicConversationGenerator(DEFAULT_CONVERSATION_GENERATOR_MESSAGES)
+      },
+      async ({ agent }) => {
+        simulationExpect(agent.events, async (state) => {
+          expect(state.currentTurn).toBe(3);
+        }).when(() => externalCounter === 20);
       }
     );
   });

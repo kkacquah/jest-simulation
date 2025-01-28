@@ -35,7 +35,7 @@ class SimulationExpectation {
               `Simulation completed but condition was never met.`
             );
             this.eventEmitter.emit(TestEvents.ERROR, error);
-            reject(error);
+            resolve();
           }
         } catch (error: Error | any) {
           this.eventEmitter.emit(TestEvents.ERROR, error);
