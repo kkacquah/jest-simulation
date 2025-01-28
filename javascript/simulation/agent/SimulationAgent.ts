@@ -146,7 +146,7 @@ export class SimulationAgent extends TypedEventEmitter {
     // Update the state with the new input
     this.setState({ ...this.state, lastAgentResponse: agentResponse, currentTurn: this.state.currentTurn });
     // Log the user's input
-    this.logger.logConversation('AGENT', agentResponse.content);
+    this.logger.logConversation(agentResponse);
 
     // Generate a response using the conversation generator
     const response = await this.conversationGenerator.generateResponse(agentResponse);
@@ -158,7 +158,7 @@ export class SimulationAgent extends TypedEventEmitter {
       isComplete: (this.state.currentTurn + 1) >= this.maxTurns
     });
     // Log the agent's response
-    this.logger.logConversation('USER', response.content);
+    this.logger.logConversation(response);
     // Emit the TURN_END event
     await this.emit(SimulationEvents.TURN_END, this.state);
 

@@ -2,7 +2,7 @@ import type { Config } from '@jest/types';
 
 
 /**
- * The jest config that tests against our current jest config uses.
+ * The jest config used for tests of this testing library.
  */
 const config: Config.InitialOptions = {
   preset: 'ts-jest/presets/default-esm',

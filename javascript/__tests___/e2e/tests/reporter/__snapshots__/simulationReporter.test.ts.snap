@@ -8,7 +8,7 @@ Test Failures:
 
 
 In /Users/kennethacquah/simulacra/javascript/__tests___/e2e/tests/fakeTests/expectEventually.test.ts:
-[31m✗ expectEventually should fail when condition never becomes true failing test[0m
+[31m✗ expectEventually should fail when condition never becomes true (10 turns) failing test[0m
   13. [35m[assistant][0m Message for turn 7
   14. [36m[user][0m Is there anything else you need?
   15. [35m[assistant][0m Message for turn 8

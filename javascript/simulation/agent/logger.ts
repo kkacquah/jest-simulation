@@ -1,3 +1,12 @@
+import { ConversationMessage } from "./conversationGenerators/BaseConversationGenerator";
+
+const colors = {
+  debug: "\x1b[90m", // gray
+  assistant: "\x1b[35m", // magenta
+  user: "\x1b[36m", // cyan
+  reset: "\x1b[0m"
+} as const;
+
 export class SimulationLogger {
   private isDebugMode: boolean;
 
@@ -7,19 +16,23 @@ export class SimulationLogger {
 
   debug(message: string, ...args: any[]) {
     if (this.isDebugMode) {
-      console.log(`[DEBUG] ${message}`, ...args);
+      process.stdout.write(`${colors.debug}[DEBUG] ${message}${colors.reset}\n`);
+      if (args.length > 0) {
+        process.stdout.write(`${colors.debug}${JSON.stringify(args, null, 2)}${colors.reset}\n`);
+      }
     }
   }
 
-  logConversation(role: string, content: string) {
+  logConversation(message: ConversationMessage) {
     if (this.isDebugMode) {
-      console.log(`[CONVERSATION] ${role}: ${content}`);
+      const color = colors[message.role];
+      process.stdout.write(`[CONVERSATION] ${color}[${message.role}]${colors.reset}: ${message.content}\n`);
     }
   }
 
   logExpectEvaluation(result: boolean) {
     if (this.isDebugMode) {
-      console.log(`[EXPECT] Condition evaluated to: ${result}`);
+      process.stdout.write(`${colors.debug}[EXPECT] Condition evaluated to: ${result}${colors.reset}\n`);
     }
   }
 }

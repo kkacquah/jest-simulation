@@ -30,7 +30,7 @@ describe('expectEventually', () => {
     );
   });
 
-  describe('should fail when condition never becomes true', () => {
+  describe('should fail when condition never becomes true (10 turns)', () => {
     let isThirdTurnPassed = false; // This will never be set to true
 
     simulationTest(
@@ -65,6 +65,26 @@ describe('expectEventually', () => {
       async ({ agent }) => {
         simulationExpect(agent.events, async () => {
           expect(isThirdTurnPassed).toBe(true);
+        }).eventually();
+      }
+    );
+  });
+
+  describe('should format successful test output correctly (with debug logger)', () => {
+    simulationTest(
+      'passing test',
+      {
+        getAgentResponse: (state: SimulationAgentState) => ({
+          role: 'assistant',
+          content: `Message for turn ${state.currentTurn}`,
+        }),
+        debug: true,
+        conversationGenerator: new DeterministicConversationGenerator(DEFAULT_CONVERSATION_GENERATOR_MESSAGES)
+      },
+      async ({ agent }) => {
+        console.log('test invoked');
+        simulationExpect(agent.events, async () => {
+          expect(true).toBe(true);
         }).eventually();
       }
     );
