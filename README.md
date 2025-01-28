@@ -1,3 +1,11 @@
+## NOTE
+
+In the future, simulacra will be split into two packages:
+- `simulacra-js` (currently hosted under `/javascript`)
+- `simulacra-py` (to be hosted under `/python`)
+
+But the description below describes usage for "simulacra-js", a javascript version of the simulacra framework.
+
 # SimulacraJS
 
 A TypeScript framework for simulating conversations with conversational agents in Jest. This framework define simulation agents that speak with your conversational agents with a rich assertion API for you to test expected agent behavior.
@@ -114,38 +122,38 @@ simulationExpect(simulationAgent.events, async (simulationAgent) => {
 Simulacra displays errors within the context of the conversation between the simulation agent and your agent, providing clear and detailed test output:
 
 ```
-    Test Failures:
-    
-    
-    In /Users/kennethacquah/simulacra/javascript/__tests___/e2e/tests/fakeTests/expectEventually.test.ts:
-    ✗ expectEventually should fail when condition never becomes true failing test
-      13. [assistant] Message for turn 7
-      14. [user] Is there anything else you need?
-      15. [assistant] Message for turn 8
-      16. [user] Thank you for your patience.
-      17. [assistant] Message for turn 9
-      18. [user] Have a great day!
-      (12 earlier steps not shown)
-    
-      expect(received).toBe(expected) // Object.is equality
+Test Failures:
+
+In /Users/kennethacquah/simulacra/javascript/__tests___/e2e/tests/fakeTests/expectEventually.test.ts:
+✗ expectEventually should fail when condition never becomes true failing test
+  13. [assistant] Message for turn 7
+  14. [user] Is there anything else you need?
+  15. [assistant] Message for turn 8
+  16. [user] Thank you for your patience.
+  17. [assistant] Message for turn 9
+  18. [user] Have a great day!
+  (12 earlier steps not shown)
+
+  expect(received).toBe(expected) // Object.is equality
+
+Expected: true
+Received: false
+  Stack trace:
     
     Expected: true
     Received: false
-      Stack trace:
-        
-        Expected: true
-        Received: false
-        at SimulationExpectation.assertionFn (/Users/kennethacquah/simulacra/javascript/__tests___/e2e/tests/fakeTests/expectEventually.test.ts:47:37)
-        at AgentEventEmitter.checkCondition (/Users/kennethacquah/simulacra/javascript/assertions/expect.ts:31:24)
-    
-    Test Summary:
-    Total Tests: 1
-    Passed: 0
-    Failed: 1
+    at SimulationExpectation.assertionFn (/Users/kennethacquah/simulacra/javascript/__tests___/e2e/tests/fakeTests/expectEventually.test.ts:47:37)
+    at AgentEventEmitter.checkCondition (/Users/kennethacquah/simulacra/javascript/assertions/expect.ts:31:24)
+
+Test Summary:
+Total Tests: 1
+Passed: 0
+Failed: 1
 ```
 
 The output includes:
-- Test name with pass/fail status (✅/❌)
+- File path of the failing test
+- Test name with fail status (✗)
 - Detailed error message and stack trace for failures, in context of conversation with your agent.
 - Summary of total tests, passes, and failures
 
