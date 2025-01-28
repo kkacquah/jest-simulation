@@ -52,7 +52,6 @@ export class SimulationAgentRunner {
         this.appendMessages(newMessages);
       } catch (error: Error | any) {
         this.completeTest(error);
-        throw error;
       }
     }
     // Complete the test, if not already completed

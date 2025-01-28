@@ -12,6 +12,5 @@ beforeAll(() => {
 afterAll(() => {
   if (global.__SIMULATION_REPORTER__) {
     global.__SIMULATION_REPORTER__.reportSimulation();
-    delete global.__SIMULATION_REPORTER__;
-  }
+  delete global.__SIMULATION_REPORTER__;
 });

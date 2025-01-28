@@ -1,13 +1,5 @@
 import { SimulationResult } from "./types";
 
-const colors = {
-  red: "\x1b[31m",
-  green: "\x1b[32m",
-  magenta: "\x1b[35m",
-  cyan: "\x1b[36m",
-  reset: "\x1b[0m"
-};
-
 export class SimulationReport {
   constructor(private result: SimulationResult) {}
 
@@ -17,9 +9,10 @@ export class SimulationReport {
 
     lastMessages.forEach((msg, index) => {
       const stepNumber = this.result.messages.length - 6 + index + 1;
-      const roleColor = msg.role === "user" ? colors.cyan : colors.magenta;
+      const roleColor = msg.role === "user" ? "\x1b[36m" : "\x1b[35m";
+      const resetColor = "\x1b[0m";
       lines.push(
-        `  ${stepNumber}. ${roleColor}[${msg.role}]${colors.reset} ${msg.content}`
+        `  ${stepNumber}. ${roleColor}[${msg.role}]${resetColor} ${msg.content}`
       );
     });
 
@@ -34,7 +27,7 @@ export class SimulationReport {
 
   toString(): string {
     const lines: string[] = [];
-    lines.push(`${colors.red}✗ ${this.result.testName}${colors.reset}`);
+    lines.push(`\x1b[31m✗ ${this.result.testName}\x1b[0m`);
 
     // Always show the last 6 messages first
     if (this.result.messages.length > 0) {
@@ -44,7 +37,7 @@ export class SimulationReport {
 
     // Then show the error
     if (this.result.error) {
-      lines.push(`  ${colors.red}${this.result.error.message}${colors.reset}`);
+      lines.push(`  \x1b[31m${this.result.error.message}\x1b[0m`);
       if (this.result.error.stack) {
         const stackLines = this.result.error.stack
           .split('\n')
@@ -74,12 +67,6 @@ export class SimulationReporter {
   }
 
   setSimulationResult(result: SimulationResult): void {
-    console.log('Setting simulation result:', {
-      path: result.path,
-      testName: result.testName,
-      hasError: !!result.error
-    });
-    
     let pathResults = this.testResults.get(result.path);
     if (!pathResults) {
       pathResults = new Map();
@@ -94,16 +81,9 @@ export class SimulationReporter {
       
       if (!result.error) {
         this.passedTests++;
-        this.write(`${colors.green}✓ ${result.testName}${colors.reset}\n`);
+        this.write(`\x1b[32m✓ ${result.testName}\x1b[0m\n`);
       }
     }
-
-    console.log('Current test results:', {
-      totalTests: this.totalTests,
-      passedTests: this.passedTests,
-      paths: Array.from(this.testResults.keys()),
-      testNames: Array.from(pathResults.keys())
-    });
   }
 
   private getFailedTests(): TestGroup[] {
@@ -143,8 +123,8 @@ export class SimulationReporter {
       failureReports,
       '\nTest Summary:',
       `Total Tests: ${this.totalTests}`,
-      `Passed: ${colors.green}${this.passedTests}${colors.reset}`,
-      `Failed: ${colors.red}${this.totalTests - this.passedTests}${colors.reset}\n`
+      `Passed: \x1b[32m${this.passedTests}\x1b[0m`,
+      `Failed: \x1b[31m${this.totalTests - this.passedTests}\x1b[0m\n`
     ].join('\n');
 
     this.write(summary);

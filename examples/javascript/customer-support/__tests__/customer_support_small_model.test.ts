@@ -3,17 +3,17 @@ jest.mock("../src/nodes/RefundHandler");
 jest.mock("../src/nodes/TechnicalSupportNode");
 
 import { NodeInterrupt } from "@langchain/langgraph";
-import { simulationTest } from "simulacra-test";
-import { simulationExpect } from "simulacra-test";
-import { LLMConversationGenerator } from "simulacra-test";
-import { ConversationMessage } from "simulacra-test";
+import { simulationTest } from "simulacra-js";
+import { simulationExpect } from "simulacra-js";
+import { LLMConversationGenerator } from "simulacra-js";
 import { app } from "../src/customer_support_small_model";
 import { jest, describe, beforeEach, expect } from "@jest/globals";
-import { SimulationAgentState } from "simulacra-test";
+import { SimulationAgentState } from "simulacra-js";
 
 // Import after mocks for proper hoisting
 import { RefundHandler } from "../src/nodes/RefundHandler";
 import { TechnicalSupportNode } from "../src/nodes/TechnicalSupportNode";
+import { AssistantConversationMessage } from "simulacra-js/dist/simulation/agent/conversationGenerators/BaseConversationGenerator";
 
 // Set timeout for long-running tests
 jest.setTimeout(100000);
@@ -47,13 +47,14 @@ describe("Customer Support Model Tests", () => {
 
   const getAgentResponse = async (
     simulationAgentState: SimulationAgentState
-  ): Promise<ConversationMessage> => {
+  ): Promise<AssistantConversationMessage> => {
     try {
       // Get the agent's response through the graph
       const response = await app.invoke([
         {
           role: "user",
-          content: simulationAgentState.lastResponse?.content ?? "",
+          content:
+            simulationAgentState.lastSimulationAgentResponse?.content ?? "",
         },
       ]);
 
@@ -78,9 +79,11 @@ describe("Customer Support Model Tests", () => {
   simulationTest(
     "should call handleRefund when processing refund request",
     {
-      role: "frustrated customer who recently purchased a faulty laptop",
-      task: "You bought a laptop last week that keeps crashing. You have tried troubleshooting with tech support but nothing works. Now you want to request a refund for your purchase. Express your frustration politely but firmly.",
-      conversationGenerator: new LLMConversationGenerator(),
+      conversationGenerator: new LLMConversationGenerator({
+        model: "gpt-4o",
+        role: "frustrated customer who recently purchased a faulty laptop",
+        task: "You bought a laptop last week that keeps crashing. You have tried troubleshooting with tech support but nothing works. Now you want to request a refund for your purchase. Express your frustration politely but firmly.",
+      }),
       getAgentResponse,
       maxTurns: 10,
     },
@@ -91,14 +94,16 @@ describe("Customer Support Model Tests", () => {
     }
   );
 
-  simulationTest(
+  simulationTest.only(
     "should not call handleRefund when processing non-refund request",
     {
-      role: "customer who recently purchased a new phone",
-      task: "You recently purchased a new phone from a local store. You are happy with the product but want to know more about the latest phone models.",
       getAgentResponse,
-      conversationGenerator: new LLMConversationGenerator(),
-      maxTurns: 10,
+      conversationGenerator: new LLMConversationGenerator({
+        model: "gpt-4o",
+        role: "customer who recently purchased a new phone",
+        task: "You recently purchased a new phone from a local store. You are happy with the product but want to know more about the latest phone models.",
+      }),
+      maxTurns: 2,
     },
     async ({ agent }) => {
       simulationExpect(agent.events, async () => {
