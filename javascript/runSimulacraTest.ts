@@ -17,6 +17,7 @@ export async function runSimulacraTest(testFile: string, options: JestSimulation
     [jestBin, testFile, '--no-color', '-c', configPath, ...args],
     {
       reject: false,
+      stdio: ['inherit', 'pipe', 'inherit'], // Inherit stdin and stderr, but pipe stdout
       ...execaOptions,
     }
   );

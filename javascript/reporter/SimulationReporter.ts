@@ -1,126 +1,137 @@
-import type { Reporter, Test, TestResult } from '@jest/reporters';
-import type { AggregatedResult, TestContext } from '@jest/test-result';
-import { SimulationResult } from './types';
+import { SimulationResult } from "./types";
 
-export class SimulationReporter implements Reporter {
-  private testResults: Map<string, SimulationResult> = new Map();
+export class SimulationReport {
+  constructor(private result: SimulationResult) {}
 
-  onRunStart(): void {
-    console.log('\nStarting Simulation Tests...\n');
-  }
+  private formatSimulationMessages(): string[] {
+    const lines: string[] = [];
+    const lastMessages = this.result.messages.slice(-6);
 
-  onTestStart(test: Test): void {
-    this.testResults.set(test.path, { messages: [] });
-  }
-
-  /**
-   * Format a successful test result
-   * Output format: [test title] (in green)
-   */
-  private formatSuccessResult(title: string): string {
-    return `\x1b[32m✓ ${title}\x1b[0m`;
-  }
-
-  /**
-   * Format error messages from Jest failure output
-   * Output format:
-   *   Error: [error message] (in red)
-   *   Expected: [expected value]
-   *   Received: [received value]
-   */
-  private formatErrorMessages(failureMessages: string[]): string[] {
-    const formattedMessages: string[] = [];
-    
-    failureMessages.forEach((msg) => {
-      const errorMatch = msg.match(/Error:(.+?)(?=\n|$)/);
-      if (errorMatch) {
-        formattedMessages.push(`  \x1b[31mError: ${errorMatch[1].trim()}\x1b[0m`);
-      }
-
-      if (msg.includes('matcherResult')) {
-        const matcherLines = msg.split('\n')
-          .filter(line => line.includes('Expected:') || line.includes('Received:'))
-          .map(line => `  ${line.trim()}`);
-        formattedMessages.push(...matcherLines);
-      }
-    });
-
-    return formattedMessages;
-  }
-
-  /**
-   * Format simulation messages with role-based colors
-   * Output format:
-   *   [step number]. [role] message (user in cyan, assistant in magenta)
-   *   Error: [error message] (if present, in red)
-   */
-  private formatSimulationMessages(result: SimulationResult): string[] {
-    const formattedMessages: string[] = [];
-    const lastMessages = result.messages.slice(-6);
-    
     lastMessages.forEach((msg, index) => {
-      const stepNumber = result.messages.length - 6 + index + 1;
-      const roleColor = msg.role === 'user' ? '\x1b[36m' : '\x1b[35m';
-      const resetColor = '\x1b[0m';
-      formattedMessages.push(
+      const stepNumber = this.result.messages.length - 6 + index + 1;
+      const roleColor = msg.role === "user" ? "\x1b[36m" : "\x1b[35m";
+      const resetColor = "\x1b[0m";
+      lines.push(
         `  ${stepNumber}. ${roleColor}[${msg.role}]${resetColor} ${msg.content}`
       );
     });
 
-    if (result.error) {
-      formattedMessages.push(
-        `     \x1b[31mError: ${result.error.message}\x1b[0m`
+    if (this.result.messages.length > 6) {
+      lines.push(
+        `  (${this.result.messages.length - 6} earlier steps not shown)`
       );
     }
 
-    if (result.messages.length > 6) {
-      formattedMessages.push(`  (${result.messages.length - 6} earlier steps not shown)`);
-    }
-
-    return formattedMessages;
+    return lines;
   }
 
-  onTestResult(
-    test: Test,
-    testResult: TestResult,
-  ): void {
-    const simulationResult = this.testResults.get(test.path) || { messages: [] };
+  toString(): string {
+    const lines: string[] = [];
+    lines.push(`\x1b[31m✗ ${this.result.testName}\x1b[0m`);
+
+    // Always show the last 6 messages first
+    if (this.result.messages.length > 0) {
+      lines.push(...this.formatSimulationMessages());
+      lines.push("");
+    }
+
+    // Then show the error
+    if (this.result.error) {
+      lines.push(`  \x1b[31m${this.result.error.message}\x1b[0m`);
+      if (this.result.error.stack) {
+        const stackLines = this.result.error.stack
+          .split('\n')
+          .slice(1) // Skip the first line as it contains the error message
+          .map(line => `    ${line.trim()}`);
+        lines.push("  Stack trace:");
+        lines.push(...stackLines);
+      }
+    }
+
+    return lines.join("\n");
+  }
+}
+
+interface TestGroup {
+  dirPath: string;
+  results: SimulationResult[];
+}
+
+export class SimulationReporter {
+  private testResults: Map<string, Map<string, SimulationResult>> = new Map();
+  private totalTests: number = 0;
+  private passedTests: number = 0;
+
+  private write(message: string): void {
+    process.stdout.write(message);
+  }
+
+  setSimulationResult(result: SimulationResult): void {
+    let pathResults = this.testResults.get(result.path);
+    if (!pathResults) {
+      pathResults = new Map();
+      this.testResults.set(result.path, pathResults);
+    }
+
+    // Only set the result if it doesn't exist or if the existing result has no error
+    const existingResult = pathResults.get(result.testName);
+    if (!existingResult || !existingResult.error) {
+      pathResults.set(result.testName, result);
+      this.totalTests++;
+      
+      if (!result.error) {
+        this.passedTests++;
+        this.write(`\x1b[32m✓ ${result.testName}\x1b[0m\n`);
+      }
+    }
+  }
+
+  private getFailedTests(): TestGroup[] {
+    const groups: TestGroup[] = [];
     
-    if (testResult.testResults) {
-      testResult.testResults.forEach((assertionResult) => {
-        if (assertionResult.status === 'passed') {
-          console.log(this.formatSuccessResult(assertionResult.title));
-        } else if (assertionResult.status === 'failed') {
-          console.log(`\x1b[31m✗ ${assertionResult.title}\x1b[0m`);
-          
-          if (assertionResult.failureMessages) {
-            console.log(`\nError Messages: ${assertionResult.failureMessages.length}`);
-            console.log(`\nSimulation Result: ${simulationResult}`);
-            const errorMessages = this.formatErrorMessages(assertionResult.failureMessages);
-            errorMessages.forEach(msg => console.log(msg));
-          }
-
-          if (simulationResult.messages.length > 0) {
-            console.log('\nLast 6 Simulation Steps Leading to Failure:');
-            const formattedMessages = this.formatSimulationMessages(simulationResult);
-            formattedMessages.forEach(msg => console.log(msg));
-            console.log('\n');
-          }
-        }
-      });
+    for (const [dirPath, pathResults] of this.testResults) {
+      const failedResults = Array.from(pathResults.values())
+        .filter(result => result.error);
+      
+      if (failedResults.length > 0) {
+        groups.push({ dirPath, results: failedResults });
+      }
     }
+
+    return groups;
   }
 
-  onRunComplete(contexts: Set<TestContext>, results: AggregatedResult): void {
-    console.log('\nSimulation Test Results:');
-    console.log(`Total Tests: ${results.numPassedTests + results.numFailedTests}`);
-    console.log(`Passed: ${results.numPassedTests}`);
-    console.log(`Failed: ${results.numFailedTests}`);
-    console.log(`Duration: ${(Date.now() - results.startTime) / 1000}s\n`);
+  reportSimulation(): void {
+    const failedGroups = this.getFailedTests();
+    
+    if (failedGroups.length === 0) {
+      this.write(`\nAll ${this.totalTests} tests passed! ✨\n\n`);
+      return;
+    }
+
+    const failureReports = failedGroups
+      .map(group => {
+        const failures = group.results
+          .map(result => new SimulationReport(result).toString())
+          .join('\n\n');
+        return `\nIn ${group.dirPath}:\n${failures}`;
+      })
+      .join('\n');
+
+    const summary = [
+      '\nTest Failures:\n',
+      failureReports,
+      '\nTest Summary:',
+      `Total Tests: ${this.totalTests}`,
+      `Passed: \x1b[32m${this.passedTests}\x1b[0m`,
+      `Failed: \x1b[31m${this.totalTests - this.passedTests}\x1b[0m\n`
+    ].join('\n');
+
+    this.write(summary);
   }
 
-  addSimulationMessages(testPath: string, result: SimulationResult): void {
-    this.testResults.set(testPath, result);
+  getTestResults(): Map<string, Map<string, SimulationResult>> {
+    return this.testResults;
   }
 }
 

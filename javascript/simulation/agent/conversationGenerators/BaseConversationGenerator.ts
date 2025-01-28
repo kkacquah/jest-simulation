@@ -1,11 +1,17 @@
 
+export interface AssistantConversationMessage {
+  role: 'assistant'
+  content: string
+}
+
+export interface UserConversationMessage {
+  role: 'user'
+  content: string
+}
 /**
  * Represents a message in the conversation
  */
-export interface ConversationMessage {
-  role: string;
-  content: string;
-}
+export type ConversationMessage  = AssistantConversationMessage | UserConversationMessage
 
 /**
  * Abstract base class for generating agent conversation responses.

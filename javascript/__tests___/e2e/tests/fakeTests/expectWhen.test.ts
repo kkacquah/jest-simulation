@@ -16,7 +16,9 @@ describe('expectWhen', () => {
     simulationTest(
       'passing test - condition met on specific turn',
       {
-        getAgentResponse,
+        getAgentResponse: (state: SimulationAgentState) => {
+          return { role: 'assistant', content: `Message for turn ${state.currentTurn}` };
+        },
         conversationGenerator: new DeterministicConversationGenerator([
           'First message',
           'Important message',
@@ -46,7 +48,7 @@ describe('expectWhen', () => {
         conversationGenerator: new DeterministicConversationGenerator(DEFAULT_CONVERSATION_GENERATOR_MESSAGES),
         getAgentResponse: () => {
           messageCount++;
-          return { role: 'user', content: `Message ${messageCount}` };
+          return { role: 'assistant', content: `Message ${messageCount}` };
         }
         
       },
@@ -72,7 +74,7 @@ describe('expectWhen', () => {
       {
         getAgentResponse: (state: SimulationAgentState) => {
           externalCounter++;
-          return { role: 'user', content: `Message ${state.currentTurn}` };
+          return { role: 'assistant', content: `Message ${state.currentTurn}` };
         },
         conversationGenerator: new DeterministicConversationGenerator(DEFAULT_CONVERSATION_GENERATOR_MESSAGES)
       },

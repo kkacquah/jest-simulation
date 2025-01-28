@@ -1,4 +1,4 @@
-import SimulationReporter from '../reporter/SimulationReporter';
+import { SimulationReporter } from "../reporter/SimulationReporter";
 
 // Create a global instance of our reporter
 declare global {
@@ -10,5 +10,8 @@ beforeAll(() => {
 });
 
 afterAll(() => {
-  delete global.__SIMULATION_REPORTER__;
+  if (global.__SIMULATION_REPORTER__) {
+    global.__SIMULATION_REPORTER__.reportSimulation();
+    delete global.__SIMULATION_REPORTER__;
+  }
 });

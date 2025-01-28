@@ -1,7 +1,6 @@
 import { EventEmitter } from 'events';
-import { AgentConversationGenerator, ConversationMessage } from './conversationGenerators/BaseConversationGenerator';
+import { AgentConversationGenerator, AssistantConversationMessage, ConversationMessage } from './conversationGenerators/BaseConversationGenerator';
 import { SimulationLogger } from './logger';
-import { DeterministicConversationGenerator } from './conversationGenerators/DeterministicConversationGenerator';
 
 export interface SimulationAgentState {
   // The current turn of the simulation
@@ -13,7 +12,7 @@ export interface SimulationAgentState {
   lastSimulationAgentResponse: ConversationMessage | null;
 }
 
-export type GetAgentResponseFunction = (state: SimulationAgentState) => Promise<ConversationMessage> | ConversationMessage;
+export type GetAgentResponseFunction = (state: SimulationAgentState) => Promise<AssistantConversationMessage> | AssistantConversationMessage;
 
 export interface AgentConstructorArgs {
   getAgentResponse: GetAgentResponseFunction;
@@ -22,23 +21,38 @@ export interface AgentConstructorArgs {
   debug?: boolean;
 }
 
+// Events emitted by the agent as it processes turns
+// during the simulation
 export const SimulationEvents = {
   INITIALIZED: 'initialized',
   TURN_START: 'turnStart',
   TURN_END: 'turnEnd',
-  COMPLETE: 'complete'
+  COMPLETE: 'complete',
+} as const;
+
+// Events emitted by the test harness
+export const TestEvents = {
+  ERROR: 'error',
 } as const;
 
 export type SimulationEventType = typeof SimulationEvents[keyof typeof SimulationEvents];
+export type TestEventType = typeof TestEvents[keyof typeof TestEvents];
+
 type SimulationEventHandler = (state: SimulationAgentState) => Promise<void>;
 
 class TypedEventEmitter extends EventEmitter {
-  on(event: SimulationEventType, listener: SimulationEventHandler): this {
+  on(event: SimulationEventType, listener: SimulationEventHandler): this;
+  on(event: TestEventType, listener: (error: Error) => void): this;
+  on(event: SimulationEventType | TestEventType, listener: SimulationEventHandler | ((error: Error) => void)): this {
     return super.on(event, listener);
   }
 
-  emit(event: SimulationEventType, state: SimulationAgentState): boolean {
+  emitAgentStateEvent(event: SimulationEventType, state: SimulationAgentState): boolean {
     return super.emit(event, state);
+  }
+
+  emitTestEvent(event: TestEventType, error: Error): boolean {
+    return super.emit(event, error);
   }
 }
 

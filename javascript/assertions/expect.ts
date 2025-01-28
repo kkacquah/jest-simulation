@@ -1,4 +1,9 @@
-import { AgentEventEmitter, SimulationEvents, SimulationAgentState } from '../simulation/agent/SimulationAgent';
+import {
+  AgentEventEmitter,
+  SimulationEvents,
+  SimulationAgentState,
+  TestEvents,
+} from "../simulation/agent/SimulationAgent";
 
 class SimulationExpectation {
   private eventEmitter: AgentEventEmitter;
@@ -12,10 +17,12 @@ class SimulationExpectation {
     this.assertionFn = assertionFn;
   }
 
-  when(conditionFn: (state: SimulationAgentState) => Promise<boolean> | boolean): Promise<void> {
+  when(
+    conditionFn: (state: SimulationAgentState) => Promise<boolean> | boolean
+  ): Promise<void> {
     return new Promise((resolve, reject) => {
       let conditionMet = false;
-     
+
       const checkCondition = async (state: SimulationAgentState) => {
         try {
           const result = await conditionFn(state);
@@ -24,20 +31,24 @@ class SimulationExpectation {
             await this.assertionFn(state);
             resolve();
           } else if (state.isComplete) {
-            reject(new Error(`Simulation completed but condition was never met.`));
+            const error = new Error(
+              `Simulation completed but condition was never met.`
+            );
+            this.eventEmitter.emit(TestEvents.ERROR, error);
+            reject(error);
           }
-        } catch (error) {
+        } catch (error: Error | any) {
+          this.eventEmitter.emit(TestEvents.ERROR, error);
           reject(error);
         }
       };
 
       this.eventEmitter.on(SimulationEvents.TURN_END, checkCondition);
-      this.eventEmitter.on(SimulationEvents.COMPLETE, checkCondition);
     });
   }
 
   eventually(): Promise<void> {
-    return this.when(state => state.isComplete);
+    return this.when((state) => state.isComplete);
   }
 
   always(): Promise<void> {
@@ -53,7 +64,7 @@ class SimulationExpectation {
       this.eventEmitter.on(SimulationEvents.TURN_END, checkAssertion);
       this.eventEmitter.on(SimulationEvents.COMPLETE, async (state) => {
         await checkAssertion(state);
-        resolve();
+        resolve(void 0);
       });
     });
   }

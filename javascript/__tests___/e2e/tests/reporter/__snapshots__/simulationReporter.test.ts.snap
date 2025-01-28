@@ -2,20 +2,39 @@
 
 exports[`SimulationReporter should format failed test output correctly 1`] = `
 "
-Starting Simulation Tests...
-"
+Test Failures:
+
+
+In /Users/kennethacquah/simulacra/javascript/__tests___/e2e/tests/fakeTests/expectEventually.test.ts:
+[31m✗ expectEventually should fail when condition never becomes true failing test[0m
+  13. [35m[assistant][0m Message for turn 7
+  14. [36m[user][0m Is there anything else you need?
+  15. [35m[assistant][0m Message for turn 8
+  16. [36m[user][0m Thank you for your patience.
+  17. [35m[assistant][0m Message for turn 9
+  18. [36m[user][0m Have a great day!
+  (12 earlier steps not shown)
+
+  [31mexpect(received).toBe(expected) // Object.is equality
+
+Expected: true
+Received: false[0m
+  Stack trace:
+    
+    Expected: true
+    Received: false
+    at SimulationExpectation.assertionFn (/Users/kennethacquah/simulacra/javascript/__tests___/e2e/tests/fakeTests/expectEventually.test.ts:47:37)
+    at AgentEventEmitter.checkCondition (/Users/kennethacquah/simulacra/javascript/assertions/expect.ts:31:24)
+
+Test Summary:
+Total Tests: 1
+Passed: [32m0[0m
+Failed: [31m1[0m"
 `;
 
 exports[`SimulationReporter should format successful test output correctly 1`] = `
-"
-Starting Simulation Tests...
+"[32m✓ expectEventually should eventually pass when condition becomes true on third turn passing test[0m
 
-[32m✓ passing test[0m
-
-Simulation Test Results:
-Total Tests: 1
-Passed: 1
-Failed: 0
-Duration: 0.731s
+All 1 tests passed! ✨
 "
 `;
