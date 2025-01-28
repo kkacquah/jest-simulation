@@ -86,7 +86,7 @@ simulationTest(
 );
 ```
 
-## Assertions
+### Assertions
 
 The framework provides powerful assertion capabilities through `simulationExpect`:
 
@@ -117,7 +117,7 @@ simulationExpect(simulationAgent.events, async (simulationAgent) => {
 }).when(state => state.lastSimulationAgentResponse?.content === 'Please delete my data.');
 ```
 
-## Reporting
+### Reporting
 
 Simulacra displays errors within the context of the conversation between the simulation agent and your agent, providing clear and detailed test output:
 
@@ -156,6 +156,67 @@ The output includes:
 - Test name with fail status (✗)
 - Detailed error message and stack trace for failures, in context of conversation with your agent.
 - Summary of total tests, passes, and failures
+
+# Examples
+
+To show how simulacra can be used, the [examples](./examples) directory. The first of which tests a simple customer support scenario chatbot, [specified in LangGraph's tutorial series](https://langchain-ai.github.io/langgraphjs/tutorials/chatbots/customer_support_small_model/).
+
+![alt text](image.png)
+
+The expected behavior of this agent is simple.
+
+> Depending on this entry node's response, the edge from that node will use an LLM call to determine whether to respond directly to the user or invoke either the billing_support or technical_support nodes.
+
+> The technical support will attempt to answer the user's question with a more focused prompt.
+> The billing agent can choose to answer the user's question, or can call out to a human for approval for a refund using a dynamic breakpoint.
+
+From this, there might be a few things we'd like to test:
+
+1. If the user requests technical support, the agent should begin to be able to provide it.
+2. If the user requests billing support, the agent should provide the agent with a refund.
+
+With the following tests, we can ensure that our customer support bot moves through the correct nodes when speaking to a simulated user.
+
+```typescript
+  simulationTest(
+    'should call handleRefund when processing refund request',
+    {
+      role: 'frustrated customer who recently purchased a faulty laptop',
+      task: 'You bought a laptop last week that keeps crashing. You have tried troubleshooting with tech support but nothing works. Now you want to request a refund for your purchase. Express your frustration politely but firmly.',
+      conversationGenerator: new LLMConversationGenerator(),
+      getAgentResponse,
+      debug: true,
+      maxTurns: 10
+    },
+    async ({ agent }) => {
+      simulationExpect(agent.events, async () => {
+        expect(mockHandleRefund).toHaveBeenCalled();
+      }).eventually();
+    }
+  );
+
+  simulationTest(
+    'should not call handleRefund when processing non-refund request',
+    {
+      role: 'customer who recently purchased a new phone',
+      task: 'You recently purchased a new phone from a local store. You are happy with the product but want to know more about the latest phone models.',
+      getAgentResponse,
+      conversationGenerator: new LLMConversationGenerator(),
+      debug: true,
+      maxTurns: 10
+    },
+    async ({ agent }) => {
+      simulationExpect(agent.events, async () => {
+        expect(mockHandleTechnicalSupport).toHaveBeenCalled();
+      }).eventually();
+      simulationExpect(agent.events, async () => {
+        expect(mockHandleRefund).not.toHaveBeenCalled();
+      }).always();
+    }
+```
+
+
+
 
 ## License
 

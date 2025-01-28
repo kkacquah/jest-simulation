@@ -49,8 +49,4 @@ Otherwise, respond only with the word "RESPOND".`;
       nextRepresentative: categorizationOutput.nextRepresentative 
     };
   }
-
-  async invoke(input: StateType): Promise<any> {
-    return this.handle(input);
-  }
 }

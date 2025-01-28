@@ -16,8 +16,4 @@ export class RefundHandler {
       },
     };
   }
-
-  async invoke(input: StateType): Promise<any> {
-    return this.handle(input);
-  }
 }

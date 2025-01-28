@@ -55,8 +55,4 @@ ${billingRepResponseText}
       content: categorizationResponse.content.toString(),
     };
   }
-
-  async invoke(input: StateType): Promise<any> {
-    return this.handle(input);
-  }
 }
