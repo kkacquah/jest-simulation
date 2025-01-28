@@ -4,22 +4,23 @@ export class SimulationReport {
   constructor(private result: SimulationResult) {}
 
   private formatSimulationMessages(): string[] {
-    const lines: string[] = [];
-    const lastMessages = this.result.messages.slice(-6);
-
-    lastMessages.forEach((msg, index) => {
-      const stepNumber = this.result.messages.length - 6 + index + 1;
+    const MAX_MESSAGES = 6;
+    const messages = this.result.messages;
+    const messagesToShow = messages.length > MAX_MESSAGES 
+      ? messages.slice(-MAX_MESSAGES)
+      : messages;
+    
+    const lines = messagesToShow.map((msg, index) => {
+      const stepNumber = messages.length > MAX_MESSAGES
+        ? messages.length - MAX_MESSAGES + index + 1
+        : index + 1;
       const roleColor = msg.role === "user" ? "\x1b[36m" : "\x1b[35m";
       const resetColor = "\x1b[0m";
-      lines.push(
-        `  ${stepNumber}. ${roleColor}[${msg.role}]${resetColor} ${msg.content}`
-      );
+      return `  ${stepNumber}. ${roleColor}[${msg.role}]${resetColor} ${msg.content}`;
     });
 
-    if (this.result.messages.length > 6) {
-      lines.push(
-        `  (${this.result.messages.length - 6} earlier steps not shown)`
-      );
+    if (messages.length > MAX_MESSAGES) {
+      lines.push(`  (${messages.length - MAX_MESSAGES} earlier steps not shown)`);
     }
 
     return lines;

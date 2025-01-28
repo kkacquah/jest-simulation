@@ -1,5 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`SimulationReporter should fail when condition never becomes true (2 turns) 1`] = `""`;
+
 exports[`SimulationReporter should format failed test output correctly 1`] = `
 "
 Test Failures:
@@ -15,21 +17,36 @@ In /Users/kennethacquah/simulacra/javascript/__tests___/e2e/tests/fakeTests/expe
   18. [36m[user][0m Have a great day!
   (12 earlier steps not shown)
 
-  [31m[2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+  [31mexpect(received).toBe(expected) // Object.is equality
 
-Expected: [32mtrue[39m
-Received: [31mfalse[39m[0m
+Expected: true
+Received: false[0m
   Stack trace:
     
-    Expected: [32mtrue[39m
-    Received: [31mfalse[39m
+    Expected: true
+    Received: false
     at SimulationExpectation.assertionFn (/Users/kennethacquah/simulacra/javascript/__tests___/e2e/tests/fakeTests/expectEventually.test.ts:47:37)
     at AgentEventEmitter.checkCondition (/Users/kennethacquah/simulacra/javascript/assertions/expect.ts:31:24)
 
+[31m✗ expectEventually should fail when condition never becomes true (2 turns) failing test[0m
+  1. [35m[assistant][0m Message for turn 1
+  2. [36m[user][0m I understand. Let me help you with that.
+
+  [31mexpect(received).toBe(expected) // Object.is equality
+
+Expected: true
+Received: false[0m
+  Stack trace:
+    
+    Expected: true
+    Received: false
+    at SimulationExpectation.assertionFn (/Users/kennethacquah/simulacra/javascript/__tests___/e2e/tests/fakeTests/expectEventually.test.ts:67:37)
+    at AgentEventEmitter.checkCondition (/Users/kennethacquah/simulacra/javascript/assertions/expect.ts:31:24)
+
 Test Summary:
-Total Tests: 1
+Total Tests: 2
 Passed: [32m0[0m
-Failed: [31m1[0m"
+Failed: [31m2[0m"
 `;
 
 exports[`SimulationReporter should format successful test output correctly 1`] = `

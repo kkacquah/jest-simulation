@@ -22,4 +22,12 @@ describe("SimulationReporter", () => {
 
     expect(result.stdout).toMatchSnapshot();
   });
+
+  it('should fail when condition never becomes true (2 turns)', async () => {
+    const result = await runSimulacraTest(testFile, {
+      args: ["-t", 'should fail when condition never becomes true (2 turns)'],
+    });
+
+    expect(result.stdout).toMatchSnapshot();
+  });
 });
