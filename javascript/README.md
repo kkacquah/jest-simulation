@@ -113,7 +113,7 @@ simulationExpect(simulationAgent.events, async (simulationAgent) => {
 
 # Test Output Format
 
-SimulacraJS displays errors within the context of the conversation between the simulation agent and your agent, providing clear and detailed test output:
+Simulacra displays errors within the context of the conversation between the simulation agent and your agent, providing clear and detailed test output:
 
 ```ansi
 Test Failures:
