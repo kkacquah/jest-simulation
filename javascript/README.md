@@ -111,6 +111,31 @@ simulationExpect(simulationAgent.events, async (simulationAgent) => {
 
 ## Reporting
 
+# Test Output Format
+
+SimulacraJS displays errors within the context of the conversation between the simulation agent and your agent, providing clear and detailed test output:
+
+```ansi
+Test Failures:
+
+In /path/to/tests/file.ts:
+[31m✗ should handle errors correctly[0m
+  13. [35m[assistant][0m Message from assistant
+  14. [36m[user][0m Message from user
+  15. [35m[assistant][0m Another message
+  (earlier messages not shown)
+
+  [31mError: expect(received).toBe(expected)[0m
+  Stack trace:
+    at TestFunction (file.ts:123:45)
+    at Runner (runner.ts:67:89)
+
+Test Summary:
+Total Tests: 3
+[32mPassed: 2[0m
+[31mFailed: 1[0m
+```
+
 ## License
 
 MIT

@@ -3,6 +3,4 @@ import { ConversationMessage } from "../simulation/agent/conversationGenerators/
 export interface SimulationResult {
   messages: ConversationMessage[];
   error?: Error;
-  path: string;
-  testName: string;
 }
