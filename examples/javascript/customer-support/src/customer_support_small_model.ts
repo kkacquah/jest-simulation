@@ -17,12 +17,6 @@ const model = new ChatTogetherAI({
   temperature: 0,
 });
 
-// Initialize nodes
-const initialSupport = new InitialSupportNode(model);
-const billingSupport = new BillingSupportNode(model);
-const technicalSupport = new TechnicalSupportNode(model);
-const refundHandler = new RefundHandler();
-
 // Build the graph
 const builder = new StateGraph(StateAnnotation)
   .addNode("initial_support", async (state: StateType) => new InitialSupportNode(model).handle(state))

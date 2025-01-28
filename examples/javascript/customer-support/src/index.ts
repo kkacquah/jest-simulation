@@ -1,1 +1,1 @@
-export { customerSupportGraph } from './customer_support_small_model';
+export { app } from './customer_support_small_model';
