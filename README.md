@@ -114,30 +114,39 @@ simulationExpect(simulationAgent.events, async (simulationAgent) => {
 Simulacra displays errors within the context of the conversation between the simulation agent and your agent, providing clear and detailed test output:
 
 ```
-Test Failures:
-
-In /path/to/tests/file.ts:
-❌ should handle errors correctly
-  13. [assistant] Message from assistant
-  14. [user] Message from user
-  15. [assistant] Another message
-  (earlier messages not shown)
-
-  Error: expect(received).toBe(expected)
-  Stack trace:
-    at TestFunction (file.ts:123:45)
-    at Runner (runner.ts:67:89)
-
-Test Summary:
-Total Tests: 3
-✅ Passed: 2
-❌ Failed: 1
+    Test Failures:
+    
+    
+    In /Users/kennethacquah/simulacra/javascript/__tests___/e2e/tests/fakeTests/expectEventually.test.ts:
+    ✗ expectEventually should fail when condition never becomes true failing test
+      13. [assistant] Message for turn 7
+      14. [user] Is there anything else you need?
+      15. [assistant] Message for turn 8
+      16. [user] Thank you for your patience.
+      17. [assistant] Message for turn 9
+      18. [user] Have a great day!
+      (12 earlier steps not shown)
+    
+      expect(received).toBe(expected) // Object.is equality
+    
+    Expected: true
+    Received: false
+      Stack trace:
+        
+        Expected: true
+        Received: false
+        at SimulationExpectation.assertionFn (/Users/kennethacquah/simulacra/javascript/__tests___/e2e/tests/fakeTests/expectEventually.test.ts:47:37)
+        at AgentEventEmitter.checkCondition (/Users/kennethacquah/simulacra/javascript/assertions/expect.ts:31:24)
+    
+    Test Summary:
+    Total Tests: 1
+    Passed: 0
+    Failed: 1
 ```
 
 The output includes:
 - Test name with pass/fail status (✅/❌)
-- Last few messages from the conversation
-- Detailed error message and stack trace for failures
+- Detailed error message and stack trace for failures, in context of conversation with your agent.
 - Summary of total tests, passes, and failures
 
 ## License
