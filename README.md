@@ -1,4 +1,4 @@
-e## NOTE
+## NOTE
 
 In the future, simulacra will be split into two packages:
 - `simulacra-js` (currently hosted under `/javascript`)
