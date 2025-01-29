@@ -1,6 +1,6 @@
 {
   "name": "simulacra-js",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "A framework for simulating and testing agent conversations",
   "type": "module",
   "main": "dist/index.js",
@@ -23,6 +23,10 @@
     "typescript"
   ],
   "author": "Kenneth Acquah",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kkacquah/simulacra-js.git"
+  },
   "license": "MIT",
   "peerDependencies": {
     "jest": "^29.0.0",
