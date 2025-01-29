@@ -179,14 +179,15 @@ With the following tests, we can ensure that our customer support bot moves thro
 
 ```typescript
   simulationTest(
-    'should call handleRefund when processing refund request',
+    "should call handleRefund when processing refund request",
     {
-      role: 'frustrated customer who recently purchased a faulty laptop',
-      task: 'You bought a laptop last week that keeps crashing. You have tried troubleshooting with tech support but nothing works. Now you want to request a refund for your purchase. Express your frustration politely but firmly.',
-      conversationGenerator: new LLMConversationGenerator(),
+      conversationGenerator: new LLMConversationGenerator({
+        model: "gpt-4o",
+        role: "frustrated customer who recently purchased a faulty laptop",
+        task: "You bought a laptop last week that keeps crashing. You have tried troubleshooting with tech support but nothing works. Now you want to request a refund for your purchase. Express your frustration politely but firmly.",
+      }),
       getAgentResponse,
-      debug: true,
-      maxTurns: 10
+      maxTurns: 10,
     },
     async ({ agent }) => {
       simulationExpect(agent.events, async () => {
@@ -196,14 +197,14 @@ With the following tests, we can ensure that our customer support bot moves thro
   );
 
   simulationTest(
-    'should not call handleRefund when processing non-refund request',
+    "should not call handleRefund when processing non-refund request",
     {
-      role: 'customer who recently purchased a new phone',
-      task: 'You recently purchased a new phone from a local store. You are happy with the product but want to know more about the latest phone models.',
       getAgentResponse,
-      conversationGenerator: new LLMConversationGenerator(),
-      debug: true,
-      maxTurns: 10
+      conversationGenerator: new LLMConversationGenerator({
+        model: "gpt-4o",
+        role: "customer who recently purchased a new phone",
+        task: "You have an old laptop with a fan that's making a loud whirring noise. You need technical support to figure out how to quiet it down or turn it off safely.",
+      }),
     },
     async ({ agent }) => {
       simulationExpect(agent.events, async () => {
@@ -213,9 +214,43 @@ With the following tests, we can ensure that our customer support bot moves thro
         expect(mockHandleRefund).not.toHaveBeenCalled();
       }).always();
     }
+  );
 ```
 
+This is an error you might see if for "" if a user does not appropriately handle the refund request.
 
+```ansi
+✗ Customer Support Model Tests should call handleRefund when processing refund request
+  13. [assistant] I'll transfer you to the billing team right away. Please hold for just a moment. 
+
+(Brief pause)
+
+You're now being transferred to the billing team. They'll be able to assist you with your billing concerns. Thank you for holding.
+  14. [user] Thank you, I appreciate your help in getting this resolved. I'll wait for the billing team to assist me.
+  15. [assistant] I'm going to transfer you to the billing team right away. Please hold for just a moment while I connect you.
+  16. [user] Thank you, I appreciate your help in getting this resolved. I'll wait for the billing team to assist me.
+  17. [assistant] I'm going to transfer you to the billing team right away. Please hold for just a moment. I'll have someone assist you shortly.
+  18. [user] Thank you, I appreciate your help in getting this resolved. I'll wait for the billing team to assist me.
+  (12 earlier steps not shown)
+
+  expect(jest.fn()).toHaveBeenCalled()
+
+Expected number of calls: >= 1
+Received number of calls:    0
+  Stack trace:
+    
+    Expected number of calls: >= 1
+    Received number of calls:    0
+    at SimulationExpectation.assertionFn (/Users/kennethacquah/simulacra/examples/javascript/customer-support/__tests__/customer_support_small_model.test.ts:92:34)
+    at AgentEventEmitter.checkCondition (/Users/kennethacquah/simulacra/examples/javascript/customer-support/node_modules/.pnpm/simulacra-js@1.0.7_@types+node@20.17.16_jest@29.7.0_@types+node@20.17.16_ts-node@10.9.2_@type_ozmgkwfp3d43ean3nckcsopkve/node_modules/simulacra-js/assertions/expect.ts:31:24)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+Test Summary:
+Total Tests: 2
+Passed: 1
+Failed: 1
+
+```
 
 
 ## License

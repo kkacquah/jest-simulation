@@ -94,7 +94,7 @@ describe("Customer Support Model Tests", () => {
     }
   );
 
-  simulationTest.only(
+  simulationTest(
     "should not call handleRefund when processing non-refund request",
     {
       getAgentResponse,
