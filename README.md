@@ -1,11 +1,3 @@
-## NOTE
-
-In the future, simulacra will be split into two packages:
-- `simulacra-js` (currently hosted under `/javascript`)
-- `simulacra-py` (to be hosted under `/python`)
-
-But the description below describes usage for "simulacra-js", a javascript version of the simulacra framework.
-
 # SimulacraJS
 
 A TypeScript framework for simulating conversations with conversational agents in Jest. This framework define simulation agents that speak with your conversational agents with a rich assertion API for you to test expected agent behavior.
