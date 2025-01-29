@@ -10,6 +10,31 @@ But the description below describes usage for "simulacra-js", a javascript versi
 
 A TypeScript framework for simulating conversations with conversational agents in Jest. This framework define simulation agents that speak with your conversational agents with a rich assertion API for you to test expected agent behavior.
 
+Here's an example testing a customer support scenario:
+
+```typescript
+simulationTest(
+  'should handle refund requests appropriately',
+  {
+    conversationGenerator: new LLMConversationGenerator({
+      role: 'frustrated customer who recently purchased a faulty laptop',
+      task: 'You bought a laptop last week that keeps crashing. You have tried troubleshooting with tech support but nothing works. Now you want to request a refund.',
+      model: 'gpt-4' // optional, defaults to gpt-4
+    }),
+    getAgentResponse: (simulationAgentState) => {
+      // Your agent logic here
+      return handleCustomerRequest(simulationAgentState.lastResponse?.content);
+    },
+  },
+  async ({ agent }) => {
+    // Test that refund handler was called
+    simulationExpect(agent.events, async () => {
+      expect(mockHandleRefund).toHaveBeenCalled();
+    }).eventually();
+  }
+);
+```
+
 ## Features
 
 - Simulate conversations with deterministic or LLM-powered responses
@@ -40,30 +65,7 @@ The framework provides two main ways to generate conversations:
 1. `DeterministicConversationGenerator` for deterministic tests with predefined user messages
 2. `LLMConversationGenerator` for testing with real language models
 
-Here's an example testing a customer support scenario:
 
-```typescript
-simulationTest(
-  'should handle refund requests appropriately',
-  {
-    conversationGenerator: new LLMConversationGenerator({
-      role: 'frustrated customer who recently purchased a faulty laptop',
-      task: 'You bought a laptop last week that keeps crashing. You have tried troubleshooting with tech support but nothing works. Now you want to request a refund.',
-      model: 'gpt-4' // optional, defaults to gpt-4
-    }),
-    getAgentResponse: (simulationAgentState) => {
-      // Your agent logic here
-      return handleCustomerRequest(simulationAgentState.lastResponse?.content);
-    },
-  },
-  async ({ agent }) => {
-    // Test that refund handler was called
-    simulationExpect(agent.events, async () => {
-      expect(mockHandleRefund).toHaveBeenCalled();
-    }).eventually();
-  }
-);
-```
 
 You can also use `DeterministicConversationGenerator` to test a conversational agent with a specific sequence of user messages:
 
