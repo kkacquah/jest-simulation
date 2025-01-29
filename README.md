@@ -189,7 +189,6 @@ With the following tests, we can ensure that our customer support bot moves thro
                 Now you want to request a refund for your purchase. Express your frustration politely but firmly.`,
       }),
       getAgentResponse,
-      maxTurns: 10,
     },
     async ({ agent }) => {
       simulationExpect(agent.events, async () => {
