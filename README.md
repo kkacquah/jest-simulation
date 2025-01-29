@@ -67,7 +67,7 @@ The framework provides two main ways to generate conversations:
 
 
 
-You can also use `DeterministicConversationGenerator` to test a conversational agent with a specific sequence of user messages:
+You can use `DeterministicConversationGenerator` to test a conversational agent with a specific sequence of user messages:
 
 ```typescript
 simulationTest(
