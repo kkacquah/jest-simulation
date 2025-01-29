@@ -184,7 +184,8 @@ With the following tests, we can ensure that our customer support bot moves thro
       conversationGenerator: new LLMConversationGenerator({
         model: "gpt-4o",
         role: "frustrated customer who recently purchased a faulty laptop",
-        task: "You bought a laptop last week that keeps crashing. You have tried troubleshooting with tech support but nothing works. Now you want to request a refund for your purchase. Express your frustration politely but firmly.",
+        task: "You bought a laptop last week that keeps crashing. You have tried troubleshooting with tech support but nothing works.
+                Now you want to request a refund for your purchase. Express your frustration politely but firmly.",
       }),
       getAgentResponse,
       maxTurns: 10,
