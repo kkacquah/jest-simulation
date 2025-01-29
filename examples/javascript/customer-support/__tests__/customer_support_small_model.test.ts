@@ -98,12 +98,12 @@ describe("Customer Support Model Tests", () => {
     "should not call handleRefund when processing non-refund request",
     {
       getAgentResponse,
+      debug: true,
       conversationGenerator: new LLMConversationGenerator({
         model: "gpt-4o",
         role: "customer who recently purchased a new phone",
         task: "You recently purchased a new phone from a local store. You are happy with the product but want to know more about the latest phone models.",
       }),
-      maxTurns: 2,
     },
     async ({ agent }) => {
       simulationExpect(agent.events, async () => {

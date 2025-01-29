@@ -1,4 +1,4 @@
-import { AgentConversationGenerator, ConversationMessage } from './BaseConversationGenerator';
+import { AgentConversationGenerator, ConversationMessage, UserConversationMessage } from './BaseConversationGenerator';
 import { OpenAIClient } from '../../llm/llm';
 
 /**
@@ -41,10 +41,14 @@ export class LLMConversationGenerator extends AgentConversationGenerator {
     Respond concisely and stay in character.`;
   }
 
-  async generateResponse(input: ConversationMessage): Promise<ConversationMessage> {
+  async generateResponse(input: ConversationMessage): Promise<UserConversationMessage> {
     if (!this.client) {
       throw new Error('LLMConversationGenerator is not initialized');
     }
-    return this.client.chat(input);
+    const response = await this.client.chat(input);
+    return {
+      role: 'user',
+      content: response.content,
+    }
   }
 }

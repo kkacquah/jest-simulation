@@ -19,7 +19,7 @@
     "@langchain/core": "^0.3.36",
     "@langchain/langgraph": "^0.2.41",
     "path": "^0.12.7",
-    "simulacra-js": "^1.0.5",
+    "simulacra-js": "^1.0.6",
     "together-ai": "^0.13.0",
     "ts-node": "^10.9.2",
     "zod": "^3.24.1",
