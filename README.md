@@ -26,7 +26,7 @@ A TypeScript framework for simulating conversations with conversational agents i
 
 ## Set up
 
-1. Install the framework using `npm install simulacra`
+1. Install the framework using `npm install simulacra-js`
 2. Define your test using `simulationTest` in a file with a `agent.test.ts` extension
 3. Add OPENAI_API_KEY to your environment variables (if using LLM-powered responses)
 4. Run your new agent tests using `npx jest agent.test.ts`.
