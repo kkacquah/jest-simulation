@@ -1,4 +1,4 @@
-## NOTE
+e## NOTE
 
 In the future, simulacra will be split into two packages:
 - `simulacra-js` (currently hosted under `/javascript`)
@@ -15,7 +15,7 @@ A TypeScript framework for simulating conversations with conversational agents i
 - Simulate conversations with deterministic or LLM-powered responses
 - Rich assertion API for testing agent behavior.
 - Automated reporting of simulation results. 
-- Extends the full power of[Jest's test framework](https://jestjs.io/).
+- Extends the full power of [Jest's test framework](https://jestjs.io/).
 
 ## Roadmap
 - [ ] Support for test parallelization
