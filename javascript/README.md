@@ -153,7 +153,7 @@ The output includes:
 
 To show how simulacra can be used, the [examples](./examples) directory. The first of which tests a simple customer support scenario chatbot, [specified in LangGraph's tutorial series](https://langchain-ai.github.io/langgraphjs/tutorials/chatbots/customer_support_small_model/).
 
-![alt text](image.png)(https://langchain-ai.github.io/langgraphjs/tutorials/chatbots/img/diagram.png)
+![alt text](https://langchain-ai.github.io/langgraphjs/tutorials/chatbots/img/diagram.png)
 
 The expected behavior of this agent is simple.
 
