@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import { ConversationMessage } from '../agent/conversationGenerators/BaseConversationGenerator';
+import { AssistantConversationMessage, UserConversationMessage } from '../agent/conversationGenerators/BaseConversationGenerator';
 
 export class OpenAIClient {
   private client: OpenAI;
@@ -22,10 +22,11 @@ export class OpenAIClient {
     });
   }
 
-  async chat(message: ConversationMessage): Promise<ConversationMessage> {
+  async chat(message: AssistantConversationMessage) {
     // Convert our message format to OpenAI's format
+    // From OAI's perspective, the developer's "assistant" is the model's "user".
     const openAIMessage: OpenAI.Chat.ChatCompletionUserMessageParam | OpenAI.Chat.ChatCompletionAssistantMessageParam = {
-      role: message.role as 'user' | 'assistant',
+      role: 'user',
       content: message.content
     };
 
@@ -46,8 +47,9 @@ export class OpenAIClient {
     this.messageHistory.push(response);
 
     // Convert back to our message format
+    // In which content returned from the model is from the user.
     return {
-      role: response.role,
+      role: 'user',
       content: response.content || ''
     };
   }

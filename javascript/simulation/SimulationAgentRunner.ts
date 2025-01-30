@@ -47,7 +47,7 @@ export class SimulationAgentRunner {
         const newState = await this.agent.nextTurn();
         const newMessages = [
           newState.lastAgentResponse,
-          newState.lastSimulationAgentResponse,
+          newState.lastSimulatedUserResponse,
         ].filter((message): message is ConversationMessage => message !== null);
         this.appendMessages(newMessages);
       } catch (error: Error | any) {

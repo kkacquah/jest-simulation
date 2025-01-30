@@ -27,8 +27,8 @@ describe('expectWhen', () => {
 
         // Test condition that depends on agent response
         simulationExpect(agent.events, async (state) => {
-          expect(state.lastSimulationAgentResponse?.content).toBe('Important message');
-        }).when(state => state.lastSimulationAgentResponse?.content === 'Important message');
+          expect(state.lastSimulatedUserResponse?.content).toBe('Important message');
+        }).when(state => state.lastSimulatedUserResponse?.content === 'Important message');
       }
     );
   });

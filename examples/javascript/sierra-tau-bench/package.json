@@ -1,0 +1,27 @@
+{
+  "name": "sierra-tau-bench",
+  "version": "1.0.0",
+  "description": "Sierra Tau Benchmark example using simulacra-js",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "simulacra",
+    "testing",
+    "benchmark"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "simulacra-js": "^1.0.10"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.0.0",
+    "@types/node": "^20.0.0",
+    "jest": "^29.0.0",
+    "ts-jest": "^29.0.0",
+    "typescript": "^5.0.0"
+  }
+}

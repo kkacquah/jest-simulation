@@ -1,4 +1,4 @@
-import { AgentConversationGenerator, ConversationMessage, UserConversationMessage } from './BaseConversationGenerator';
+import { AgentConversationGenerator, AssistantConversationMessage, ConversationMessage, UserConversationMessage } from './BaseConversationGenerator';
 import { OpenAIClient } from '../../llm/llm';
 
 /**
@@ -38,14 +38,27 @@ export class LLMConversationGenerator extends AgentConversationGenerator {
     ${task} 
     
     ### Style
-    Respond concisely and stay in character.`;
+    Respond concisely and stay in character.
+    
+    ### Instructions
+    - Respond to the user casually and concisely.
+    - Keep talking until the task is completed.
+    - Once it is completed, respond with the word "<STOP>".
+  `;
+
   }
 
-  async generateResponse(input: ConversationMessage): Promise<UserConversationMessage> {
+  async generateResponse(input: AssistantConversationMessage): Promise<UserConversationMessage> {
     if (!this.client) {
       throw new Error('LLMConversationGenerator is not initialized');
     }
     const response = await this.client.chat(input);
+    if (response.content === '<STOP>') {
+      return {
+        role: 'user',
+        stopTokenReturned: true
+      }
+    }
     return {
       role: 'user',
       content: response.content,

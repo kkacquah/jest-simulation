@@ -108,7 +108,7 @@ simulationExpect(simulationAgent.events, async (simulationAgent) => {
 // Assert something when a condition is met during a simulation
 simulationExpect(simulationAgent.events, async (simulationAgent) => {
   expect(mockDeleteUserData).toBeCalled();
-}).when(state => state.lastSimulationAgentResponse?.content === 'Please delete my data.');
+}).when(state => state.lastSimulatedUserResponse?.content === 'Please delete my data.');
 ```
 
 ### Reporting

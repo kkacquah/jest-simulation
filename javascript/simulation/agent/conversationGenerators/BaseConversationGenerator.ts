@@ -1,12 +1,15 @@
 
-export interface AssistantConversationMessage {
+export type AssistantConversationMessage = {
   role: 'assistant'
   content: string
-}
+} 
 
-export interface UserConversationMessage {
+export type UserConversationMessage = {
   role: 'user'
   content: string
+} | {
+  role: 'user'
+  stopTokenReturned: true
 }
 /**
  * Represents a message in the conversation

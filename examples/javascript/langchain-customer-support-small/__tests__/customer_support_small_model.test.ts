@@ -54,7 +54,7 @@ describe("Customer Support Model Tests", () => {
         {
           role: "user",
           content:
-            simulationAgentState.lastSimulationAgentResponse?.content ?? "",
+            simulationAgentState.lastSimulatedUserResponse?.content ?? "",
         },
       ]);
 
