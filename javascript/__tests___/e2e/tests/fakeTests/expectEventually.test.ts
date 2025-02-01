@@ -1,7 +1,7 @@
 import { simulationExpect } from '../../../../assertions/expect';
 import { AssistantConversationMessage } from '../../../../simulation/agent/conversationGenerators/BaseConversationGenerator';
 import { DeterministicConversationGenerator } from '../../../../simulation/agent/conversationGenerators/DeterministicConversationGenerator';
-import { SimulationAgentState } from '../../../../simulation/agent/SimulationAgent';
+import { SimulatedUserState } from '../../../../simulation/agent/SimulatedUser';
 import { simulationTest } from '../../../../simulation/simulationTest';
 import { DEFAULT_CONVERSATION_GENERATOR_MESSAGES } from '../assertions/utils';
 
@@ -9,7 +9,7 @@ describe('expectEventually', () => {
   describe('should eventually pass when condition becomes true on third turn', () => {
     let isThirdTurnPassed = false;
 
-    const getAgentResponse = (state: SimulationAgentState): AssistantConversationMessage => {
+    const getAgentResponse = (state: SimulatedUserState): AssistantConversationMessage => {
       if (state.currentTurn === 2) { // Third turn (0-based index)
         isThirdTurnPassed = true;
       }
@@ -36,7 +36,7 @@ describe('expectEventually', () => {
     simulationTest(
       'failing test',
       {
-        getAgentResponse: (state: SimulationAgentState) => ({
+        getAgentResponse: (state: SimulatedUserState) => ({
           role: 'assistant',
           content: `Message for turn ${state.currentTurn}`,
         }),
@@ -55,7 +55,7 @@ describe('expectEventually', () => {
     simulationTest(
       'failing test',
       {
-        getAgentResponse: (state: SimulationAgentState) => ({
+        getAgentResponse: (state: SimulatedUserState) => ({
           role: 'assistant',
           content: `Message for turn ${state.currentTurn}`,
         }),
@@ -74,7 +74,7 @@ describe('expectEventually', () => {
     simulationTest(
       'passing test',
       {
-        getAgentResponse: (state: SimulationAgentState) => ({
+        getAgentResponse: (state: SimulatedUserState) => ({
           role: 'assistant',
           content: `Message for turn ${state.currentTurn}`,
         }),

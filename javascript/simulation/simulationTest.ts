@@ -1,8 +1,8 @@
-import { SimulationAgent, AgentConstructorArgs } from "./agent/SimulationAgent";
-import { SimulationAgentRunner } from "./SimulationAgentRunner";
+import { SimulatedUser, AgentConstructorArgs } from "./agent/SimulatedUser";
+import { AgentSimulationEnvironment } from "./AgentSimulationEnvironment";
 
 export interface SimulationContext {
-  agent: SimulationAgent;
+  agent: SimulatedUser;
   logs: string[];
 }
 
@@ -36,7 +36,7 @@ const createSimulationTest = (jestTestFn: jest.It) => {
   ) => {
     jestTestFn(name, async () => {
       const logs: string[] = [];
-      const runner = new SimulationAgentRunner(agentArgs);
+      const runner = new AgentSimulationEnvironment(agentArgs);
       const agent = runner.getAgent();
       const context: SimulationContext = { agent, logs };
 
@@ -53,7 +53,7 @@ const createSimulationTest = (jestTestFn: jest.It) => {
 /**
  * Creates a Jest test that executes a simulation with the following sequence:
  *
- * 1. Creates a SimulationAgentRunner with the provided configuration
+ * 1. Creates a AgentSimulationEnvironment with the provided configuration
  * 2. Allows test to set up event handlers and state
  * 3. Runs all turns of the simulation
  *

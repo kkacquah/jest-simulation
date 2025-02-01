@@ -4,13 +4,17 @@ export type AssistantConversationMessage = {
   content: string
 } 
 
-export type UserConversationMessage = {
+export type UserConversationContentMessage = {
   role: 'user'
   content: string
-} | {
+}
+
+export type UserConversationStopMessage = {
   role: 'user'
   stopTokenReturned: true
 }
+
+export type UserConversationMessage = UserConversationContentMessage | UserConversationStopMessage;
 /**
  * Represents a message in the conversation
  */

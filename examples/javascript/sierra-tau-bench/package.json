@@ -15,7 +15,12 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "simulacra-js": "^1.0.10"
+    "@jest/globals": "^29.7.0",
+    "fs": "0.0.1-security",
+    "openai": "^4.82.0",
+    "simulacra-js": "^1.0.10",
+    "zod": "^3.24.1",
+    "zod-to-json-schema": "^3.24.1"
   },
   "devDependencies": {
     "@types/jest": "^29.0.0",

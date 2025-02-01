@@ -1,12 +1,12 @@
 import { ConversationMessage } from "./agent/conversationGenerators/BaseConversationGenerator";
 import {
   AgentConstructorArgs,
-  SimulationAgent,
+  SimulatedUser,
   TestEvents,
-} from "./agent/SimulationAgent";
+} from "./agent/SimulatedUser";
 
 /**
- * SimulationAgentRunner manages the lifecycle of a SimulationAgent.
+ * AgentSimulationEnvironment manages the lifecycle of a SimulatedUser.
  * It provides a high-level interface for running a complete simulation
  * while maintaining separation between the simulation logic and its execution.
  *
@@ -18,12 +18,12 @@ import {
  * This separation allows tests to set up event handlers and verify state
  * before the simulation begins running.
  */
-export class SimulationAgentRunner {
-  private agent: SimulationAgent;
+export class AgentSimulationEnvironment {
+  private agent: SimulatedUser;
   private messages: ConversationMessage[] = [];
 
   constructor(agentArgs: AgentConstructorArgs) {
-    this.agent = new SimulationAgent(agentArgs);
+    this.agent = new SimulatedUser(agentArgs);
 
     // Listen for errors and pass them to completeTest
     this.agent.events.on(TestEvents.ERROR, (error: Error) => {
@@ -72,7 +72,7 @@ export class SimulationAgentRunner {
     }
   }
 
-  getAgent(): SimulationAgent {
+  getAgent(): SimulatedUser {
     return this.agent;
   }
 }

@@ -3,12 +3,11 @@ jest.mock("../src/nodes/RefundHandler");
 jest.mock("../src/nodes/TechnicalSupportNode");
 
 import { NodeInterrupt } from "@langchain/langgraph";
-import { simulationTest } from "simulacra-js";
+import { SimulationAgentState, simulationTest } from "simulacra-js";
 import { simulationExpect } from "simulacra-js";
 import { LLMConversationGenerator } from "simulacra-js";
 import { app } from "../src/customer_support_small_model";
 import { jest, describe, beforeEach, expect } from "@jest/globals";
-import { SimulationAgentState } from "simulacra-js";
 
 // Import after mocks for proper hoisting
 import { RefundHandler } from "../src/nodes/RefundHandler";
@@ -46,7 +45,7 @@ describe("Customer Support Model Tests", () => {
   });
 
   const getAgentResponse = async (
-    simulationAgentState: SimulationAgentState
+    simulatedUserState: SimulationAgentState
   ): Promise<AssistantConversationMessage> => {
     try {
       // Get the agent's response through the graph
@@ -54,7 +53,7 @@ describe("Customer Support Model Tests", () => {
         {
           role: "user",
           content:
-            simulationAgentState.lastSimulatedUserResponse?.content ?? "",
+            simulatedUserState.lastAgentResponse?.content ?? "",
         },
       ]);
 

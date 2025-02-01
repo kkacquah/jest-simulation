@@ -2,7 +2,7 @@ import { EventEmitter } from 'events';
 import { AgentConversationGenerator, AssistantConversationMessage, ConversationMessage } from './conversationGenerators/BaseConversationGenerator';
 import { SimulationLogger } from './logger';
 
-export interface SimulationAgentState {
+export interface SimulatedUserState {
   // The current turn of the simulation
   currentTurn: number;
   // The last input received from the user
@@ -12,7 +12,7 @@ export interface SimulationAgentState {
   lastSimulatedUserResponse: ConversationMessage | null;
 }
 
-export type GetAgentResponseFunction = (state: SimulationAgentState) => Promise<AssistantConversationMessage> | AssistantConversationMessage;
+export type GetAgentResponseFunction = (state: SimulatedUserState) => Promise<AssistantConversationMessage> | AssistantConversationMessage;
 
 export interface AgentConstructorArgs {
   getAgentResponse: GetAgentResponseFunction;
@@ -38,7 +38,7 @@ export const TestEvents = {
 export type SimulationEventType = typeof SimulationEvents[keyof typeof SimulationEvents];
 export type TestEventType = typeof TestEvents[keyof typeof TestEvents];
 
-type SimulationEventHandler = (state: SimulationAgentState) => Promise<void>;
+type SimulationEventHandler = (state: SimulatedUserState) => Promise<void>;
 
 class TypedEventEmitter extends EventEmitter {
   on(event: SimulationEventType, listener: SimulationEventHandler): this;
@@ -47,7 +47,7 @@ class TypedEventEmitter extends EventEmitter {
     return super.on(event, listener);
   }
 
-  emitAgentStateEvent(event: SimulationEventType, state: SimulationAgentState): boolean {
+  emitAgentStateEvent(event: SimulationEventType, state: SimulatedUserState): boolean {
     return super.emit(event, state);
   }
 
@@ -68,7 +68,7 @@ export class AgentEventEmitter extends TypedEventEmitter {
 export const DEFAULT_MAX_TURNS = 10;
 
 /**
- * SimulationAgent is the core simulation engine that processes turns and emits events.
+ * SimulatedUser is the core simulation engine that processes turns and emits events.
  * It uses an AgentConversationGenerator to generate responses for each turn.
  * 
  * Events:
@@ -80,8 +80,8 @@ export const DEFAULT_MAX_TURNS = 10;
  * Each event handler receives the current agent state and can perform async operations.
  * The agent will wait for all event handlers to complete before proceeding.
  */
-export class SimulationAgent extends TypedEventEmitter {
-  public state: SimulationAgentState | null = null;
+export class SimulatedUser extends TypedEventEmitter {
+  public state: SimulatedUserState | null = null;
   private getAgentResponse: GetAgentResponseFunction;
   private maxTurns: number;
   private conversationGenerator: AgentConversationGenerator;
@@ -111,7 +111,7 @@ export class SimulationAgent extends TypedEventEmitter {
     });
   }
 
-  private setState(newState: SimulationAgentState) {
+  private setState(newState: SimulatedUserState) {
     this.state = newState;
     return this.state;
   }
@@ -129,7 +129,7 @@ export class SimulationAgent extends TypedEventEmitter {
     await this.nextTurn();
   }
 
-  async nextTurn(): Promise<SimulationAgentState> {
+  async nextTurn(): Promise<SimulatedUserState> {
     // Check if the agent state is initialized
     if (!this.state) {
       throw new Error('Agent state is not initialized.');

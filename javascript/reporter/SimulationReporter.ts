@@ -3,6 +3,14 @@ import { SimulationResult } from "./types";
 export class SimulationReport {
   constructor(private result: SimulationResult) {}
 
+  /**
+   * Formats simulation messages for display. Messages can be either:
+   * 1. Regular messages: "  1. [user] What is 2+2?"
+   * 2. Stop condition: "  2. [user] <STOP>"
+   * 
+   * Only shows the last MAX_MESSAGES messages for brevity.
+   * Colors: user messages in cyan, assistant messages in magenta.
+   */
   private formatSimulationMessages(): string[] {
     const MAX_MESSAGES = 6;
     const messages = this.result.messages;
@@ -16,6 +24,9 @@ export class SimulationReport {
         : index + 1;
       const roleColor = msg.role === "user" ? "\x1b[36m" : "\x1b[35m";
       const resetColor = "\x1b[0m";
+      if ('stopTokenReturned' in msg) {
+        return `  ${stepNumber}. ${roleColor}[${msg.role}]${resetColor} <STOP>`;
+      }
       return `  ${stepNumber}. ${roleColor}[${msg.role}]${resetColor} ${msg.content}`;
     });
 

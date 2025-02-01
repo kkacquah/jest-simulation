@@ -1,6 +1,7 @@
 import { simulationExpect } from '../../../../assertions/expect';
+import { UserConversationContentMessage } from '../../../../simulation/agent/conversationGenerators/BaseConversationGenerator';
 import { DeterministicConversationGenerator } from '../../../../simulation/agent/conversationGenerators/DeterministicConversationGenerator';
-import { SimulationAgentState } from '../../../../simulation/agent/SimulationAgent';
+import { SimulatedUserState } from '../../../../simulation/agent/SimulatedUser';
 import { simulationTest } from '../../../../simulation/simulationTest';
 import { DEFAULT_CONVERSATION_GENERATOR_MESSAGES } from '../assertions/utils';
 
@@ -10,7 +11,7 @@ describe('expectWhen', () => {
     simulationTest(
       'should pass when condition becomes true during simulation',
       {
-        getAgentResponse: (state: SimulationAgentState) => {
+        getAgentResponse: (state: SimulatedUserState) => {
           return { role: 'assistant', content: `Message for turn ${state.currentTurn}` };
         },
         conversationGenerator: new DeterministicConversationGenerator([
@@ -27,8 +28,9 @@ describe('expectWhen', () => {
 
         // Test condition that depends on agent response
         simulationExpect(agent.events, async (state) => {
-          expect(state.lastSimulatedUserResponse?.content).toBe('Important message');
-        }).when(state => state.lastSimulatedUserResponse?.content === 'Important message');
+          expect('content' in state.lastSimulatedUserResponse!).toBe(true);
+          expect((state.lastSimulatedUserResponse as UserConversationContentMessage).content).toBe('Important message');
+        }).when(state => (state.lastSimulatedUserResponse as UserConversationContentMessage).content === 'Important message');
       }
     );
   });
@@ -66,7 +68,7 @@ describe('expectWhen', () => {
     simulationTest(
       'passing test - external state changes',
       {
-        getAgentResponse: (state: SimulationAgentState) => {
+        getAgentResponse: (state: SimulatedUserState) => {
           externalCounter++;
           return { role: 'assistant', content: `Message ${state.currentTurn}` };
         },
@@ -86,7 +88,7 @@ describe('expectWhen', () => {
     simulationTest(
       'passing test - external state changes',
       {
-        getAgentResponse: (state: SimulationAgentState) => {
+        getAgentResponse: (state: SimulatedUserState) => {
           externalCounter++;
           return { role: 'assistant', content: `Message ${state.currentTurn}` };
         },

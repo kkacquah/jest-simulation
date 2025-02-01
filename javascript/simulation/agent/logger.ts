@@ -4,7 +4,8 @@ const colors = {
   debug: "\x1b[90m", // gray
   assistant: "\x1b[35m", // magenta
   user: "\x1b[36m", // cyan
-  reset: "\x1b[0m"
+  reset: "\x1b[0m",
+  stop: "\x1b[31m" // red
 } as const;
 
 export class SimulationLogger {
@@ -25,8 +26,11 @@ export class SimulationLogger {
 
   logConversation(message: ConversationMessage) {
     if (this.isDebugMode) {
-      const color = colors[message.role];
-      process.stdout.write(`[CONVERSATION] ${color}[${message.role}]${colors.reset}: ${message.content}\n`);
+      if ('stopTokenReturned' in message) {
+        process.stdout.write(`[STOP TOKEN RETURNED] ${colors[message.role]}[${message.role}]${colors.reset}\n`);
+        return;
+      }
+      process.stdout.write(`[CONVERSATION] ${colors[message.role]}[${message.role}]${colors.reset}: ${message.content}\n`);
     }
   }
 

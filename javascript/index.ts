@@ -1,11 +1,11 @@
 // Core simulation types and functions
 export { 
-  SimulationAgent, 
-  type SimulationAgentState, 
+  SimulatedUser, 
+  type SimulatedUserState, 
   type AgentConstructorArgs, 
   type GetAgentResponseFunction,
   SimulationEvents
-} from './simulation/agent/SimulationAgent';
+} from './simulation/agent/SimulatedUser';
 
 export { 
   simulationTest, 
@@ -31,4 +31,4 @@ export {
   simulationExpect 
 } from './assertions/expect';
 
-export { SimulationAgentRunner } from './simulation/SimulationAgentRunner';
+export { AgentSimulationEnvironment } from './simulation/AgentSimulationEnvironment';

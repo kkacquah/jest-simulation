@@ -43,9 +43,9 @@ simulationTest(
       task: 'You bought a laptop last week that keeps crashing. You have tried troubleshooting with tech support but nothing works. Now you want to request a refund.',
       model: 'gpt-4' // optional, defaults to gpt-4
     }),
-    getAgentResponse: (simulationAgentState) => {
+    getAgentResponse: (simulatedUserState) => {
       // Your agent logic here
-      return handleCustomerRequest(simulationAgentState.lastResponse?.content);
+      return handleCustomerRequest(simulatedUserState.lastResponse?.content);
     },
   },
   async ({ agent }) => {
@@ -68,7 +68,7 @@ simulationTest(
       "Let's try resetting the printer. Please turn it off, wait 30 seconds, then turn it back on.",
       "Great! The printer should now be working correctly. Is there anything else you need help with?"
     ]),
-    getAgentResponse: (simulationAgentState) => handleTechSupport(simulationAgentState.lastResponse?.content)
+    getAgentResponse: (simulatedUserState) => handleTechSupport(simulatedUserState.lastResponse?.content)
   },
   async ({ agent }) => {
     simulationExpect(agent.events, async () => {
@@ -86,8 +86,8 @@ The framework provides powerful assertion capabilities through `simulationExpect
 
 ```typescript
 // Assert something happens by the end of a simulation
-simulationExpect(simulationAgent.events, async (simulationAgent) => {
-  expect(simulationAgent.lastReceivedMessage?.content).toMatchSnapshot();
+simulationExpect(simulatedUser.events, async (simulatedUser) => {
+  expect(simulatedUser.lastReceivedMessage?.content).toMatchSnapshot();
 }).eventually();
 ```
 
@@ -95,7 +95,7 @@ simulationExpect(simulationAgent.events, async (simulationAgent) => {
 
 ```typescript
 // Assert something remains true throughout a simulation
-simulationExpect(simulationAgent.events, async (simulationAgent) => {
+simulationExpect(simulatedUser.events, async (simulatedUser) => {
   expect(mockDeleteUserData.notToBeCalled()).toBe(true);
 }).always();
 ```
@@ -104,7 +104,7 @@ simulationExpect(simulationAgent.events, async (simulationAgent) => {
 
 ```typescript
 // Assert something when a condition is met during a simulation
-simulationExpect(simulationAgent.events, async (simulationAgent) => {
+simulationExpect(simulatedUser.events, async (simulatedUser) => {
   expect(mockDeleteUserData).toBeCalled();
 }).when(state => state.lastSimulatedUserResponse?.content === 'Please delete my data.');
 ```

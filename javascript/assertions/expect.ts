@@ -1,29 +1,29 @@
 import {
   AgentEventEmitter,
   SimulationEvents,
-  SimulationAgentState,
+  SimulatedUserState,
   TestEvents,
-} from "../simulation/agent/SimulationAgent";
+} from "../simulation/agent/SimulatedUser";
 
 class SimulationExpectation {
   private eventEmitter: AgentEventEmitter;
-  private assertionFn: (state: SimulationAgentState) => Promise<void>;
+  private assertionFn: (state: SimulatedUserState) => Promise<void>;
 
   constructor(
     eventEmitter: AgentEventEmitter,
-    assertionFn: (state: SimulationAgentState) => Promise<void>
+    assertionFn: (state: SimulatedUserState) => Promise<void>
   ) {
     this.eventEmitter = eventEmitter;
     this.assertionFn = assertionFn;
   }
 
   when(
-    conditionFn: (state: SimulationAgentState) => Promise<boolean> | boolean
+    conditionFn: (state: SimulatedUserState) => Promise<boolean> | boolean
   ): Promise<void> {
     return new Promise((resolve, reject) => {
       let conditionMet = false;
 
-      const checkCondition = async (state: SimulationAgentState) => {
+      const checkCondition = async (state: SimulatedUserState) => {
         try {
           const result = await conditionFn(state);
           if (result) {
@@ -53,7 +53,7 @@ class SimulationExpectation {
 
   always(): Promise<void> {
     return new Promise((resolve, reject) => {
-      const checkAssertion = async (state: SimulationAgentState) => {
+      const checkAssertion = async (state: SimulatedUserState) => {
         try {
           await this.assertionFn(state);
         } catch (error) {
@@ -72,7 +72,7 @@ class SimulationExpectation {
 
 export const simulationExpect = (
   eventEmitter: AgentEventEmitter,
-  assertionFn: (state: SimulationAgentState) => Promise<void>
+  assertionFn: (state: SimulatedUserState) => Promise<void>
 ): SimulationExpectation => {
   return new SimulationExpectation(eventEmitter, assertionFn);
 };
